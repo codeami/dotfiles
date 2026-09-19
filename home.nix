@@ -26,6 +26,10 @@ in
     enable = true;
     autosuggestion.enable = true;      # ghost text from history
     syntaxHighlighting.enable = true;  # commands turn green when valid
+    # Lands in ~/.zshenv, where the previous one had it.
+    envExtra = ''
+      [ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
+    '';
     initContent = lib.mkMerge [
       (lib.mkOrder 550 ''
         # herdr is a manual install outside Nix, so generate its completion from
@@ -43,6 +47,19 @@ in
       '')
       (lib.mkOrder 1000 ''
         bindkey '^f' autosuggest-accept
+
+        # Carried over from this Mac's previous ~/.zshrc, kept at
+        # ~/.zshrc.before-nix-darwin. nvm, Rust, Antigravity and OpenClaw all
+        # install themselves outside Nix, so they stay wired up here.
+        export PATH="$HOME/.local/bin:$PATH"
+
+        export NVM_DIR="$HOME/.nvm"
+        [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+        [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+
+        export PATH="$HOME/.antigravity/antigravity/bin:$PATH"
+
+        [ -f "$HOME/.openclaw/completions/openclaw.zsh" ] && source "$HOME/.openclaw/completions/openclaw.zsh"
       '')
     ];
     shellAliases = {
