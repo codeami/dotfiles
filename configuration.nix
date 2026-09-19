@@ -38,7 +38,10 @@
   homebrew = {
     enable = true;
     onActivation.cleanup = "zap";  # remove anything not listed here
-    onActivation.autoUpdate = true;
+    # Intel macOS 26 has no Homebrew API data (packages.tahoe.jws.json 404s) and
+    # nix-homebrew pins Homebrew itself, so the auto-update can never succeed -
+    # it printed "Failed to download" on every switch. Nothing here needs it.
+    onActivation.autoUpdate = false;
     onActivation.extraFlags = [ "--force" ];
     # Everything below was already installed on this Mac. `zap` above removes
     # any brew package missing from these lists, so anything worth keeping has
