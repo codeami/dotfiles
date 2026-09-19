@@ -2,6 +2,7 @@
 home/.config/herdr/*.log
 home/.config/herdr/session.json
 home/.config/herdr/*.sock
+home/.config/herdr/.plugins.lock
 
 # macOS + nix build noise
 .DS_Store
@@ -17,3 +18,6 @@ result-*
 
 # no-mistakes local validation state - never commit in this public repo
 .no-mistakes/
+
+# oh-my-claudecode project memory and session logs
+.omc/
