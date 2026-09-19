@@ -35,8 +35,26 @@ Running the switch builds:
 ## Prerequisites
 
 - Apple Silicon Mac, by default.
-- Intel Mac: change one line.
-  In `configuration.nix`, set `nixpkgs.hostPlatform = "x86_64-darwin";` (the comment right there tells you the same thing).
+- Intel Mac: change one line, and expect Homebrew to be thinner.
+  In `configuration.nix`, set `nixpkgs.hostPlatform = "x86_64-darwin";` (the comment right there tells you the same thing), then read "Intel Macs" below.
+
+## Intel Macs
+
+The whole config works on Intel - this repo was set up on one - but two constraints shape what you can add later.
+
+- **Nixpkgs 26.05 is the last release to support `x86_64-darwin`**, and every evaluation says so on stderr.
+  `flake.lock` pins 26.05, so this keeps building as-is, but there is no later Nixpkgs to move to on this hardware.
+- **Homebrew's Intel macOS bottles are thin, and vary by formula.**
+  Casks and packages that are already installed are unaffected, but a formula Homebrew has not built for Intel has no bottle at all, and `brew bundle` then fails on every switch.
+  Check before you declare one:
+
+  ```sh
+  curl -s https://formulae.brew.sh/api/formula/gh.json | python3 -c 'import json,sys; f=json.load(sys.stdin)["bottle"]["stable"].get("files") or {}; print(", ".join(sorted(k for k in f if not k.startswith(("arm64", "x86_64_linux")))) or "no Intel macOS bottle")'
+  ```
+
+  Intel macOS tags are the bare codenames (`sonoma`, `tahoe`); `arm64_*` is Apple Silicon and `x86_64_linux` is Linux.
+  Coverage drifts over time - the last time this was checked, `gh`, `ffmpeg`, `node` and `herdr` had none, `jq` and `ripgrep` stopped at `sonoma`, and `python@3.13` still had `tahoe`.
+  That is why `herdr` is installed by hand; see its note under "Make it yours".
 
 ## Fresh-machine setup
 
@@ -118,6 +136,7 @@ programs.git = {
 **Homebrew migration:** `configuration.nix` sets `nix-homebrew.autoMigrate = true`.
 On a Mac that already has Homebrew from the official installer, that lets nix-homebrew take the existing install over (it keeps your installed packages and replaces the Homebrew checkout itself).
 Without it, activation stops and tells you to uninstall Homebrew or enable migration.
+The migration also leaves one stale artifact: `/usr/local/share/zsh/site-functions/_brew` points into a `completions/` directory the pinned checkout does not have, so every new shell prints a `compinit` error until you delete it (`brew completions link` just recreates the broken link).
 
 **Homebrew cleanup warning:** `configuration.nix` sets `homebrew.onActivation.cleanup = "zap"`.
 That means every time you switch, Homebrew removes any package or cask on your machine that isn't listed in the `brews` and `casks` arrays in `configuration.nix`.
