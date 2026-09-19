@@ -141,9 +141,13 @@ Without it, activation stops and tells you to uninstall Homebrew or enable migra
 The migration also leaves one stale artifact: `/usr/local/share/zsh/site-functions/_brew` points into a `completions/` directory the pinned checkout does not have, so every new shell prints a `compinit` error until you delete it (`brew completions link` just recreates the broken link).
 
 **Homebrew cleanup warning:** `configuration.nix` sets `homebrew.onActivation.cleanup = "zap"`.
-That means every time you switch, Homebrew removes any package or cask on your machine that isn't listed in the `brews` and `casks` arrays in `configuration.nix`.
-If you already have Homebrew stuff installed that isn't in that list, the first switch will uninstall it.
-Read through `brews` and `casks` before you run `bootstrap.sh` or `rebuild.sh` for the first time, and add anything you want to keep.
+That means every time you switch, Homebrew removes anything installed on your machine that isn't listed in `brews`, `casks` and `taps` in `configuration.nix`.
+Casks go the way of `brew uninstall --zap`, so their preferences, caches and application support files go too, not just the app.
+Dependencies of packages you did declare are left alone.
+If you already have Homebrew stuff installed that isn't in those lists, the first switch removes it: read through them before you run `bootstrap.sh` or `rebuild.sh` for the first time, and add anything you want to keep.
+
+That is deliberate. It makes the Nix config the only route a package can take onto this machine, so the system stays reproducible instead of drifting as things get installed ad hoc - and when you do add something, it is declared in one place rather than living only in your shell history.
+If you would rather be told than have things removed, `homebrew.onActivation.cleanup = "check"` aborts activation with a list of the extras instead, and `"uninstall"` removes them without zapping cask leftovers.
 
 **About `herdr`:** it is deliberately *not* in the `brews` list, and it is the one thing here Nix does not manage.
 Its Homebrew formula ships bottles for Apple Silicon and Linux only, so on an Intel Mac `brew install herdr` fails with "no bottle available" on every single switch.
