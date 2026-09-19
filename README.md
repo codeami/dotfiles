@@ -55,13 +55,15 @@ Change the host label or CPU architecture if needed, and read the Homebrew clean
 ./bootstrap.sh
 ```
 
-`bootstrap.sh` does four things, in order:
+`bootstrap.sh` does five things, in order:
 
 1. Installs Determinate Nix, if it isn't already installed.
 2. Symlinks this repo to `~/.dotfiles`.
    This has to happen before the first build, because `home.nix` points at config files through `~/.dotfiles`.
 3. Checks the `user` configured in `flake.nix` against your actual macOS username, and offers to fix it for you if they differ.
-4. Runs the first `darwin-rebuild switch`.
+4. Turns on the `nix-command` and `flakes` experimental features in the system config (`/etc/nix/nix.conf`) if they are off.
+   Determinate's installer enables them for you; a `nix` that was already on the machine from another installer may not have them, and the next step needs them.
+5. Runs the first `darwin-rebuild switch`.
    It fetches the `darwin-rebuild` tool from the nix-darwin 26.05 release branch, then applies this repo's locked flake config.
 
 After that, `darwin-rebuild` exists and you're on the normal workflow below.
@@ -113,14 +115,19 @@ programs.git = {
 };
 ```
 
+**Homebrew migration:** `configuration.nix` sets `nix-homebrew.autoMigrate = true`.
+On a Mac that already has Homebrew from the official installer, that lets nix-homebrew take the existing install over (it keeps your installed packages and replaces the Homebrew checkout itself).
+Without it, activation stops and tells you to uninstall Homebrew or enable migration.
+
 **Homebrew cleanup warning:** `configuration.nix` sets `homebrew.onActivation.cleanup = "zap"`.
 That means every time you switch, Homebrew removes any package or cask on your machine that isn't listed in the `brews` and `casks` arrays in `configuration.nix`.
 If you already have Homebrew stuff installed that isn't in that list, the first switch will uninstall it.
 Read through `brews` and `casks` before you run `bootstrap.sh` or `rebuild.sh` for the first time, and add anything you want to keep.
 
-**About `herdr`:** it's in the `brews` list.
-It's a real public Homebrew formula (`brew info herdr` finds it in homebrew-core, no tap needed), so it will install fine.
-If you don't use it, just remove it from `brews` in your copy.
+**About `herdr`:** it is deliberately *not* in the `brews` list, and it is the one thing here Nix does not manage.
+Its Homebrew formula ships bottles for Apple Silicon and Linux only, so on an Intel Mac `brew install herdr` fails with "no bottle available" on every single switch.
+Instead, take `herdr-macos-x86_64` from the [upstream releases page](https://github.com/herdrdev/herdr/releases) (v0.9.1, sha256 `053be0639935fe54ab5efbdb46651054e4f6a753a5b43153c88bd6912bce1e94`, unsigned and with no published checksum), then `chmod +x` it and drop it in `/usr/local/bin/herdr`.
+Apple Silicon Macs can put it back in `brews` and delete this note.
 
 **Heads-up:**
 
