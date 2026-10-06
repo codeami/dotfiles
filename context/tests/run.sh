@@ -4,7 +4,7 @@
 # MAP defaults to dotfiles/home/AGENTS.md; override: MAP=path bash tests/run.sh
 set -u
 CTX="$(cd "$(dirname "$0")/.." && pwd)"; DOT="$(cd "$CTX/.." && pwd)"
-MAP="${MAP:-$DOT/home/AGENTS.md}"; cd "$CTX"
+MAP="${MAP:-$DOT/home/AGENTS.md}"; [ -e "$MAP" ] && MAP="$(cd "$(dirname "$MAP")" && pwd)/$(basename "$MAP")"; cd "$CTX"
 pass=0; fail=0; warn=0
 ok(){ printf '  PASS  %s\n' "$1"; pass=$((pass+1)); }
 bad(){ printf '  FAIL  %s\n' "$1"; fail=$((fail+1)); }
