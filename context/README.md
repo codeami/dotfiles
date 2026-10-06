@@ -45,6 +45,6 @@ Running sessions keep their old context; new sessions pick up the new map.
 start   → tool loads the map (+ the room's CONTEXT.md)
 during  → you give feedback and constraints out loud
 end     → you say "end of session"; the AI writes notes to inbox/sessions/
-night   → backpass reads the notes, proposes rule changes (writes nothing)
+night   → backpass reads the session logs (notes included), proposes rule changes (writes nothing)
 morning → you approve or reject; only approved rules go into the map
 ```

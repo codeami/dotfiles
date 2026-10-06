@@ -112,7 +112,7 @@ Because every tool reads the same file when a session starts, it's also where th
 start   → the tool loads the map (+ the room's CONTEXT.md)
 during  → you give feedback and constraints out loud
 end     → you say "end of session"; the AI writes notes to inbox/
-night   → a second pass reads the notes and proposes rule changes
+night   → backpass reads the session logs and proposes rule changes
 morning → you approve or reject; only approved rules go into the map
 ```
 
@@ -120,7 +120,7 @@ Three habits make this work:
 
 1. **Say feedback as a rule.** Not just "redo it", but "too formal, keep my conversational tone". The AI can only save what you actually said.
 2. **Declare the end.** "End of session" tells the AI to write its notes: the goals, constraints and decisions, where it went its own way, and which files it read. Close the tab without it and the lesson is gone. (Claude Code can do this automatically with a hook; in a chat app, the phrase is the trigger.)
-3. **Never let a session edit the shared file.** Raw notes go into `inbox/`. Overnight, the obvious ones get merged into proposed rules, such as the same correction showing up in two different sessions. One-offs and contradictions get flagged. In the morning you see a short list and approve what's right. The map only changes with your OK, so it stays a rulebook you agreed to and doesn't drift. On my machine, Claude's desktop app won't even let Claude open the file its own instructions come from, so that review step is enforced for me.
+3. **Never let a session edit the shared file.** Notes go into `inbox/`, not into the map. Overnight, Kun Chen's backpass reads the session logs themselves (the end-of-session notes included, since they're written inside the session) and proposes a rule only when the same correction shows up in at least two sessions, with exact quotes as proof. In the morning you go through the proposals one card at a time and approve what's right, and you skim the notes for one-off mistakes worth adding by hand. The map only changes with your OK, so it stays a rulebook you agreed to and doesn't drift. On my machine, Claude's desktop app won't even let Claude open the file its own instructions come from, so that review step is enforced for me.
 
 Test: `tests/run.sh` section S2 checks the map is short (under 120 lines), has a routing table with a fallback row, that every file the table names exists, that `home.nix` links Claude, Codex, OpenCode and Gemini to the one map, and that no room repeats what the map says. Section S3 checks the map says what to do on "end of session" and forbids editing itself.
 

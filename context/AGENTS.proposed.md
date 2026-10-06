@@ -74,8 +74,8 @@ summary to `~/context/inbox/sessions/` using `inbox/_template.md`: goals,
 constraints, decisions, assumptions, **where the AI went its own way**,
 open questions, files read. Decisions, not a transcript. When I give
 feedback mid-session, restate it as a candidate rule in the summary.
-Never edit this file from a session: the overnight pass proposes rule
-changes from the inbox and I approve them in the morning.
+Never edit this file from a session: backpass proposes rule changes
+from session logs overnight and I approve them in the morning.
 
 ## Layers (for reference)
 
