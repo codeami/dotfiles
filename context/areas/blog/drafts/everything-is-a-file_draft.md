@@ -2,7 +2,7 @@
 
 *Simplify AI with plain folders and files: your goals, your context and your rules, written down once and read by every tool you use.*
 
-*Draft 2 · sections 1–4 written, 5–8 outlined · every section ends with a test you can run*
+*Draft 3 · all eight sections written · every section ends with a test you can run*
 
 ---
 
@@ -174,25 +174,101 @@ long chat (4 rounds) ──► pull out the decisions ──► voice.md
          └──── a new mistake shows up ◄── next request ◄┘
 ```
 
-I don't have Substrate, so I do it by hand. Every session ends by writing a short summary into `inbox/sessions/`, and one heading in it is *where the AI went its own way*. Overnight, Kun Chen's backpass reads those summaries and proposes rule changes. In the morning I approve or reject them.
+I don't have Substrate, so I use the end-of-session notes from section 2. Their *where the AI went its own way* heading is my version of the red circles.
 
 Test: `tests/run.sh` section S3 checks the session template has that heading. The real check is whether the same correction stops showing up week after week.
 
-## 5. Separate the model from the system *(outline)*
+## 5. Separate the model from the system
 
-The chef is one person in a kitchen full of ordinary equipment. Most of an "AI agent" is ordinary software; the model is the one part you can swap.
+A restaurant isn't its chef. Most of what makes it work is ordinary: the fridge, the stove, the order tickets, the person who checks each plate before it goes out. Swap the chef and a well-run kitchen still serves the same menu.
 
-## 6. One folder, one agent *(outline)*
+AI tools work the same way. In his course Jake takes one apart: a research tool that runs psychology questionnaires on language models. Most of it turns out to be ordinary software: a queue of requests, retries when a call fails, and code that pulls numbers out of the replies and scores them. The model is one step in the middle.
 
-Jake's content pipeline (research, scripts in his voice, audio, animation) from one folder in two or three prompts.
+```
+request → routing → tools → model → check → result
+           code      code    (swap)  person + code
+```
 
-## 7. Fix one thing, then rerun *(outline)*
+He uses a rough rule of thumb, 60/30/10: about 60% plain code for the predictable steps, 30% written rules, 10% model judgment. It's a design reminder, not a measurement. The useful question is: if I changed the model tomorrow, what would still work?
 
-Tune a guitar one string at a time: read, draft, check, correct.
+In my setup the answer is almost everything. FirstMate and Kun Chen's tools are the kitchen: separate worktrees, watchers, and a pre-push gate that runs review, tests and lint. The map in `AGENTS.md` is the written rules. Claude, Codex or Pi is whichever chef is on shift.
 
-## 8. How I wired it up *(outline)*
+Test: `tests/e2e-probe.sh` asks four different AI tools the same question. If all four return the canary, the context doesn't depend on which model is on shift.
 
-One base folder for every AI tool, FirstMate as the "one agent", backpass as the overnight pass, and the tests above.
+## 6. One folder, one agent
+
+Jake's own work shows this scales. A company asked him for three short videos about three of its products. He did it from one folder with one Claude Code session:
+
+1. research notes for each product;
+2. scripts in his voice;
+3. audio made with an AI copy of his voice;
+4. animations built from reusable pieces he'd made before.
+
+He says it took two or three prompts, because the know-how for every step was already in a file: his voice guide, his rules for scripts, his library of animation pieces.
+
+```
+research/ ─► scripts/ ─► audio/ ─► animation/
+   ▲            ▲           ▲          ▲
+voice.md   script rules  voice clone  component library
+```
+
+His summary: "probably four or five startups… all in folders and markdown files with one agent."
+
+A smaller version is this post. It sits in my blog room (`areas/blog/`), and the room already knows where my notes are, how I want it to sound (`voice.md`), how a post is laid out (`template.md`) and where drafts go. From here on, "write the next section" is enough of a prompt.
+
+Test: this draft lives at `context/areas/blog/drafts/`, which is exactly where the routing table says blog posts go.
+
+## 7. Fix one thing, then rerun
+
+Tuning a guitar: pluck one string, adjust, pluck again. Turn all six pegs at once and you'll never know which one put it out of tune.
+
+Fix these files the same way. When an answer comes back wrong:
+
+```
+read → draft → check against the source → find the one cause → change one line → rerun the same task
+```
+
+Jake's example: a meeting summary said "we'll send the proposal Friday", but the notes only said "timing to confirm". The fix is one rule: "don't turn a suggestion into a commitment; list missing dates as questions." Rerun the same request and check whether the date now shows as unconfirmed. Keep the rule if it helped, drop it if it didn't.
+
+His list of common mistakes is worth pinning up:
+
+- the top file holds everything;
+- the routing lives only in your head;
+- more folders than work;
+- describing a personality instead of a task;
+- stale context;
+- everything in one pile;
+- building the system before getting one useful result.
+
+Test: the tests follow the same rule. Delete `voice.md` and rerun `tests/run.sh`: the two checks that need it fail and everything else still passes. One change, one visible effect.
+
+## 8. How I wired it up
+
+Everything lives in one git repo, my dotfiles:
+
+```
+dotfiles/
+├── home.nix          the list of links
+├── home/AGENTS.md    the map (every tool reads it)
+├── context/          rooms, inbox, tests   → ~/context
+└── second-brain/     notes
+```
+
+Setting up a machine takes three steps: clone the repo, run the rebuild script (it creates every link), run the tests. A normal day looks like this:
+
+```
+start a session    any tool reads the map → routes to a room
+work               say feedback as rules
+"end of session"   notes land in ~/context/inbox/sessions/
+overnight          backpass proposes rule changes, writes nothing
+morning            I review the changes and keep what's right
+```
+
+FirstMate runs several agents at once. Each picks up the same map through its own tool's link, so there's nothing extra to sync. Each project repo adds its own short `AGENTS.md` for its build and test rules.
+
+What's still missing: chat apps (Claude.ai, Claude Desktop's chat, Gemini on the web) can't follow links on my disk, so for now I paste the map into a project there. Next on my list is a small MCP server with two tools, "load context" and "save context", so chat apps can read the map and write to the inbox too.
+
+If you take one thing from this post: write down what you keep explaining, put it where every tool can find it, and change it only on purpose.
 
 ---
 
