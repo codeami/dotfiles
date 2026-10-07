@@ -43,6 +43,10 @@ file was actually loaded.)
    my explicit OK. Full-auto modes (`cc`/`co`) only inside a worktree.
 7. **Secrets never go in files**, commits, logs or prompts.
 8. **Ask, don't guess,** when a task could belong to two rooms below.
+9. **Ordered work.** Multi-step work lives in numbered stage folders
+   (`01-…`, `02-…`). Each stage's `CONTEXT.md` names input, one task, output,
+   check. Do one stage at a time, no silent skips. I decide at the first
+   and last stage; fix a wrong result by fixing the stage file, not the output.
 
 ## Routing (the map)
 

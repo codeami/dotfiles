@@ -19,6 +19,10 @@ while IFS='|' read -r _ _ room _; do r=$(echo "$room"|grep -o '`[^`]*`'|tr -d '`
   check "room $r has CONTEXT.md (the process is written down)" "[ -f '${r%/}/CONTEXT.md' ]"; done < <(rows)
 check "blog room has voice.md (a refined prompt saved as a file)" "[ -f areas/blog/voice.md ]"
 check "blog room has template.md (reusable structure)" "[ -f areas/blog/template.md ]"
+for st in 01-idea 02-research 03-outline 04-draft 05-review 06-publish; do
+  check "blog stage $st has a CONTEXT.md contract" "[ -f areas/blog/$st/CONTEXT.md ]"
+done
+check "map has the ordered-work rule" "grep -q 'Ordered work' \"\$MAP\""
 
 echo "S2  Map, rooms, tools: one short map, linked into every tool"
 n=$(wc -l < "$MAP"|tr -d ' ')

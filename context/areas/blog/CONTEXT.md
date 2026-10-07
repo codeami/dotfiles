@@ -3,7 +3,13 @@
 Posts that teach one idea simply, for engineers new to agentic AI.
 Every draft is reviewed in Lavish (Kun Chen's lavish-axi).
 
-## Process
+## Stages (do them in order)
+The work moves through numbered folders: `01-idea` → `02-research` → `03-outline` →
+`04-draft` → `05-review` → `06-publish`. Each has a `CONTEXT.md` with input, task,
+output, check. I decide at 01 and 05; the middle runs on its own. If a result is wrong,
+fix the stage file (or `voice.md`), not just the output.
+
+## Process (detail for stage 04–05)
 1. Start from the notes in `../../../second-brain/nodes/` the task names.
 2. Read the Lavish playbooks first: `npx -y lavish-axi playbook explanation`
    and `npx -y lavish-axi playbook diagram`.
