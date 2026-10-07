@@ -8,7 +8,7 @@
 
 In the first post I argued that, in AI, everything is a file: write your goals, rules and context down once, in folders, and every tool reads the same thing. That covers what the agents *know*. It says nothing about how work actually gets *done* when several agents run at once, or how you notice when one of them quietly drifts from what you asked.
 
-For that I use Kun Chen's open-source stack, built around a tool called FirstMate. This post is about how the two halves fit together, and how I check that the agents' intent still matches mine.
+For that I use [Kun Chen](https://github.com/kunchenguid)'s open-source stack, built around a tool called [FirstMate](https://github.com/kunchenguid/firstmate). This post is about how the two halves fit together, and how I check that the agents' intent still matches mine.
 
 ## 1. Two halves: doing and knowing
 
@@ -136,7 +136,34 @@ Merge them into one store and a model's guess could end up with the authority of
 
 The "drift" idea comes from Kay Kumar's research tool Substrate, from Jake Van Clief's video. It maps what the user meant and what the model decided as two graphs, then lists the gaps. In this setup the cheapest version is already in the end-of-session notes: one heading, "where the AI went its own way". If that turns out not to be enough, a proper extractor becomes a scout job for FirstMate rather than another tool for me to maintain.
 
-## 6. The whole loop
+## 6. Where Matt Pocock's skills fit
+
+Not everyone needs a fleet. Matt Pocock's [skills](https://github.com/mattpocock/skills) take a different route to the same problem. Instead of orchestrating many agents, they give one agent better habits, packaged as skills you install into a repo: `npx skills@latest add mattpocock/skills`, then `/setup-matt-pocock-skills` once per repo (Claude Code can also install it as a plugin).
+
+A few of them:
+
+- `/grill-me`: the agent interviews you about your plan until every open question is resolved.
+- `/to-spec`: turns a discussion into a tracked spec.
+- `/implement`: builds a feature with test-driven development and code-review gates.
+- `/tdd`, `/diagnosing-bugs`, `/code-review`, `/domain-modeling`.
+
+How it lines up with the rest:
+
+| | Kun Chen's stack | ICM-style folders | Matt Pocock's skills |
+|---|---|---|---|
+| Main idea | many agents, isolated, checked before shipping | the right files in front of the agent | good engineering habits as reusable procedures |
+| Unit of work | a crewmate with a brief | a room with a `CONTEXT.md` | a skill you call with `/name` |
+| In the map / rooms / tools picture | the crew | the map and the rooms | the tools |
+| How it protects intent | brief, pre-push gate, backpass | explicit routing, "files read" | `/grill-me` before work, specs, tests first |
+
+Two things to know before mixing them:
+
+1. **Same filename, different job.** In Matt's repo, `CONTEXT.md` is a glossary of the project's own terms (the domain-driven-design idea that developers and code should share one language). In Jake's method, `CONTEXT.md` explains how a kind of work gets done. Both are useful. Keep them apart (his in the project repo, mine in `~/context/areas/`) and say which is which in the map. A v1.3 release reportedly renames his file to `GLOSSARY.md`; I couldn't confirm that yet, as the releases page still shows v1.2.3 as the latest.
+2. **Don't pay for two reviews.** `/code-review` and no-mistakes both review code before it lands. Pick one per project.
+
+The skill I'd try first is `/grill-me`, because it attacks intent drift from the other end. backpass and the drift idea notice where the model went its own way after the fact. Grilling makes the agent ask before it starts, which is the cheapest moment to catch a hard limit about to become a soft one.
+
+## 7. The whole loop
 
 ```
 you ─► first mate ─► brief ─► crewmates (ships, scouts, secondmates)
@@ -151,7 +178,7 @@ you ─► first mate ─► brief ─► crewmates (ships, scouts, secondmates)
  └──────────┴────── next session reads ◄───┘
 ```
 
-## 7. What's still rough (honestly)
+## 8. What's still rough (honestly)
 
 - `/stow` only runs when I ask for it.
 - backpass is installed but not yet working against my Claude and Codex logins, so the weekly rule loop is still manual.
@@ -159,10 +186,19 @@ you ─► first mate ─► brief ─► crewmates (ships, scouts, secondmates)
 - Chat apps (Claude.ai, Claude Desktop's chat) can't read any of these files, so I still paste context there.
 - One leak to fix: when you tell Claude "remember this", it saves to its own private memory, which Codex and the other tools never see. Claude won't write through the link to the shared file. For anything that should apply everywhere, the shared map is the place, and it changes only through review.
 
-## 8. The takeaway
+## 9. The takeaway
 
 Kun Chen's stack decides **who does the work and whether it's safe to ship**. Plain files decide **what every agent knows**. Small, separate reviews (the brief, the pre-push gate, `/stow`, backpass) keep **what the agents do** close to **what I meant**, and every one of them leaves a file I can read.
 
 ---
 
-Sources: [FirstMate](https://github.com/kunchenguid/firstmate) · [backpass](https://github.com/kunchenguid/backpass) · [no-mistakes](https://github.com/kunchenguid/no-mistakes) · [Kun Chen's tools list](https://github.com/kunchenguid/kun/blob/main/TOOLS.md) · [Jake Van Clief, "You're Automating The Wrong Layer"](https://www.youtube.com/watch?v=956DPSPX4wg) · [ICM paper, arXiv 2603.16021](https://arxiv.org/abs/2603.16021) · FirstMate scout report "Claude vs Firstmate" (private, 2026-10-05)
+## Credits and further reading
+
+These posts stand on other people's work:
+
+- **Jake Van Clief**: the Interpretable Context Methodology (ICM). Read [the paper](https://arxiv.org/abs/2603.16021), watch ["You're Automating The Wrong Layer"](https://www.youtube.com/watch?v=956DPSPX4wg) and [his YouTube channel](https://www.youtube.com/@JEVanClief), and join the [Clief Notes community and course on Skool](https://www.skool.com/cliefnotes); the Foundation course is the place to start. Also [Eduba](https://eduba.io).
+- **Kay Kumar**: Substrate, the research tool shown in Jake's video that maps what a user meant against what a model decided (not public yet).
+- **Kun Chen**: [FirstMate](https://github.com/kunchenguid/firstmate), [backpass](https://github.com/kunchenguid/backpass), [no-mistakes](https://github.com/kunchenguid/no-mistakes), [gnhf](https://github.com/kunchenguid/gnhf), [treehouse](https://github.com/kunchenguid/treehouse), the [AXI](https://axi.md) principles, and the [dotfiles](https://github.com/kunchenguid/dotfiles) my setup is forked from. His [tools list](https://github.com/kunchenguid/kun/blob/main/TOOLS.md) is the best map of the whole stack.
+- **Andrej Karpathy**: the [LLM Wiki idea file](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f), a knowledge base an LLM keeps as plain markdown, and the push for ["context engineering" over "prompt engineering"](https://x.com/karpathy/status/1937902205765607626).
+- **Matt Pocock**: [mattpocock/skills](https://github.com/mattpocock/skills), agent skills for real engineering work (see post 2).
+- **The [AGENTS.md](https://agents.md) convention**: one instructions file that many coding agents read.

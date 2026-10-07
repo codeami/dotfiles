@@ -8,7 +8,7 @@
 
 Unix has an old idea: everything is a file. Your keyboard, your disk, even a running process show up as files you can read and write. It made a complicated machine simple to work with.
 
-Working with AI is heading the same way. Jake Van Clief calls his version the Interpretable Context Methodology (ICM). Strip away the name and it says this: stop pasting the same explanations into chats. Write them down as plain files in folders, and let the AI read the ones it needs.
+Working with AI is heading the same way. Jake Van Clief calls his version the [Interpretable Context Methodology](https://arxiv.org/abs/2603.16021) (ICM), and teaches it in his [Clief Notes course](https://www.skool.com/cliefnotes). Strip away the name and it says this: stop pasting the same explanations into chats. Write them down as plain files in folders, and let the AI read the ones it needs.
 
 This post walks through the idea in four steps. I built a small working version as I went, and each step ends with a test that checks it.
 
@@ -274,4 +274,13 @@ If you take one thing from this post: write down what you keep explaining, put i
 
 *Caveats: Substrate is unreleased, and my description comes from screenshots in the video. Jake reports 20–40% token savings from people using his method; I haven't measured that myself.*
 
-Sources: [Jake Van Clief, "You're Automating The Wrong Layer"](https://www.youtube.com/watch?v=956DPSPX4wg) · [ICM paper, arXiv 2603.16021](https://arxiv.org/abs/2603.16021) · Clief Notes Foundation course · [backpass](https://github.com/kunchenguid/backpass)
+## Credits and further reading
+
+These posts stand on other people's work:
+
+- **Jake Van Clief**: the Interpretable Context Methodology (ICM). Read [the paper](https://arxiv.org/abs/2603.16021), watch ["You're Automating The Wrong Layer"](https://www.youtube.com/watch?v=956DPSPX4wg) and [his YouTube channel](https://www.youtube.com/@JEVanClief), and join the [Clief Notes community and course on Skool](https://www.skool.com/cliefnotes); the Foundation course is the place to start. Also [Eduba](https://eduba.io).
+- **Kay Kumar**: Substrate, the research tool shown in Jake's video that maps what a user meant against what a model decided (not public yet).
+- **Kun Chen**: [FirstMate](https://github.com/kunchenguid/firstmate), [backpass](https://github.com/kunchenguid/backpass), [no-mistakes](https://github.com/kunchenguid/no-mistakes), [gnhf](https://github.com/kunchenguid/gnhf), [treehouse](https://github.com/kunchenguid/treehouse), the [AXI](https://axi.md) principles, and the [dotfiles](https://github.com/kunchenguid/dotfiles) my setup is forked from. His [tools list](https://github.com/kunchenguid/kun/blob/main/TOOLS.md) is the best map of the whole stack.
+- **Andrej Karpathy**: the [LLM Wiki idea file](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f), a knowledge base an LLM keeps as plain markdown, and the push for ["context engineering" over "prompt engineering"](https://x.com/karpathy/status/1937902205765607626).
+- **Matt Pocock**: [mattpocock/skills](https://github.com/mattpocock/skills), agent skills for real engineering work (see post 2).
+- **The [AGENTS.md](https://agents.md) convention**: one instructions file that many coding agents read.
