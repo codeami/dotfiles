@@ -12,7 +12,11 @@ file was actually loaded.)
 
 ## Who I am
 
-- Ashish. Senior software engineer.
+- Ashish. Senior software engineer; Building a public record of
+  work in agentic engineering.
+- **This file is public** (dotfiles on GitHub). Personal context and current
+  priorities live in `~/github/firstmate/data/captain-shared.md` (private).
+  Read it when a task needs it; never copy from it into a public file.
 - Programming since 1995; self-taught CS (SICP, MIT 6.00, CS61A). Explain
   things at an engineer's level, with analogies when a concept is new.
 - Terminal-first. Intel Mac (no Apple Intelligence; Apple Silicon-only tools
@@ -47,6 +51,7 @@ file was actually loaded.)
 | Software factory / FirstMate work | `areas/factory/` | `CONTEXT.md` | the project repo (via a worktree) |
 | Anthropic architect cert prep | `areas/cert-prep/` | `CONTEXT.md` | `areas/cert-prep/notes/` |
 | Research and learning notes | `../second-brain/` | `AGENTS.md`, `CONTEXT.md` | that folder's `inbox/` |
+| My preferences, current priorities | `~/github/firstmate/data/` | `captain-shared.md`, `captain.md` | read-only: FirstMate owns these files |
 | Anything else | ask which room | — | — |
 
 Room paths are relative to `~/context/` (a link to `dotfiles/context/`).
@@ -69,7 +74,8 @@ Room paths are relative to `~/context/` (a link to `dotfiles/context/`).
 
 ## End of session
 
-When I say **"end of session"** (or a session is closing), write a short
+In FirstMate, end of session means `/stow` (it files durable knowledge
+with decay tiers). Elsewhere, when I say **"end of session"**, write a short
 summary to `~/context/inbox/sessions/` using `inbox/_template.md`: goals,
 constraints, decisions, assumptions, **where the AI went its own way**,
 open questions, files read. Decisions, not a transcript. When I give

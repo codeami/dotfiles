@@ -21,3 +21,8 @@ result-*
 
 # oh-my-claudecode project memory and session logs
 .omc/
+
+# context: session notes and drift output can hold private details; this repo is public
+context/inbox/sessions/*
+!context/inbox/sessions/.gitkeep
+context/inbox/drift/

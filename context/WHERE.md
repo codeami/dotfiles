@@ -56,7 +56,7 @@ backpass reads those logs   ──►  proposes edits to home/AGENTS.md  ──�
 | `areas/cert-prep/CONTEXT.md`, `notes/` | Cert topics mapped to things you've built; one note per topic | Agent on cert tasks | Study sessions | live |
 | `inbox/_template.md` | Shape of an end-of-session note | Agent | At "end of session" | live |
 | `inbox/sessions/` | One note per session: goals, constraints, decisions, where the AI went its own way, files read | Agent writes; you skim; backpass sees them inside the session logs | Written at "end of session"; skimmed each morning | rebuild |
-| `tests/run.sh` | 29 structure checks (blog sections 1–3), no tokens | You | After editing the map, a room, or `home.nix` | live |
+| `tests/run.sh` | 32 structure checks (blog sections 1–3), no tokens | You | After editing the map, a room, or `home.nix` | live |
 | `tests/e2e-probe.sh` | Asks each installed agent for the canary from an empty folder | You (costs a few tokens) | After `./rebuild.sh`, or when an agent seems to ignore the map | rebuild |
 
 ## 4. Links in `~` (made by `./rebuild.sh`, never edit them directly)
@@ -89,7 +89,12 @@ Pi's global instructions file isn't linked yet — check Pi's docs for its path,
 
 | Path | What | Context it adds |
 |------|------|-----------------|
-| `~/github/firstmate/` | FirstMate itself: `AGENTS.md` = the first mate's job description; `data/` captain, projects, backlog; `state/` runtime | Its own `AGENTS.md` (supervisor role) on top of the map |
+| `~/github/firstmate/` | FirstMate itself: `AGENTS.md` = the first mate's job description; `state/` runtime | Its own `AGENTS.md` (supervisor role) on top of the map |
+| `~/github/firstmate/data/captain-shared.md` | **Who you are now, current priorities, how to work with you** — quoted and dated. Private (gitignored) | FirstMate writes (inspect-then-update); the map routes other tools here read-only |
+| `~/github/firstmate/data/captain.md` | Home-domain preferences, hardware facts | FirstMate writes |
+| `~/github/firstmate/data/learnings.md` | Curated operational facts, with decay markers | FirstMate writes via `/stow` |
+| `~/github/firstmate/data/backlog.md` | The work queue; task-scoped notes live with each item | FirstMate (`tasks-axi`) |
+| `~/github/firstmate/data/<id>/report.md` | Scout findings | crewmate (scout) |
 | `~/github/firstmate/projects/<repo>/` | Each project (one clone per repo) | `<repo>/AGENTS.md` (build, test, repo rules) + `CLAUDE.md` containing `@AGENTS.md` |
 | `~/ai-agents-memory-frameworks/` | Research on memory systems (`memory-frameworks/`), `icm-architect`, `higher-order-thinking` (has `yt_transcript.py`) | Own `AGENTS.md`; not routed from the map yet |
 | `~/dsh/` | DeepSeek Harness | Own `AGENTS.md` per folder |
@@ -103,7 +108,8 @@ change home.nix   ./rebuild.sh → tests/run.sh → tests/e2e-probe.sh
 session start     tool opens its link → home/AGENTS.md → route → areas/<room>/CONTEXT.md
                   (in a project: + <repo>/AGENTS.md)
 during            say feedback as rules ("too formal — keep my tone")
-"end of session"  agent writes ~/context/inbox/sessions/<date>-<tool>-<slug>.md
+"end of session"  FirstMate: /stow → data/{captain,captain-shared,learnings}.md
+                  elsewhere: agent writes ~/context/inbox/sessions/<date>-<tool>-<slug>.md (git-ignored)
                   (the tool's own log is already on disk)
 night             backpass --scope user   reads logs → proposals, writes nothing   [todo: schedule]
 morning           backpass apply → cards in Lavish → approved edits land in home/AGENTS.md

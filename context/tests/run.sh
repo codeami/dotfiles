@@ -15,7 +15,7 @@ echo "map: $MAP"
 rows(){ awk '/^\| *Task/{t=1;next} t&&/^\|---/{next} t&&/^\|/{print} t&&!/^\|/{t=0}' "$MAP"; }
 
 echo "S1  Levels: work is captured as files, not left in chats"
-while IFS='|' read -r _ _ room _; do r=$(echo "$room"|grep -o '`[^`]*`'|tr -d '`'); [ -z "$r" ] && continue
+while IFS='|' read -r _ _ room _; do r=$(echo "$room"|grep -o '`[^`]*`'|tr -d '`'); case "$r" in areas/*) ;; *) continue;; esac
   check "room $r has CONTEXT.md (the process is written down)" "[ -f '${r%/}/CONTEXT.md' ]"; done < <(rows)
 check "blog room has voice.md (a refined prompt saved as a file)" "[ -f areas/blog/voice.md ]"
 check "blog room has template.md (reusable structure)" "[ -f areas/blog/template.md ]"
@@ -25,7 +25,7 @@ n=$(wc -l < "$MAP"|tr -d ' ')
 check "map is short enough to scan ($n ≤ 120 lines)" "[ $n -le 120 ]"
 check "map has a routing table" "grep -q '^| *Task *|' '$MAP'"
 check "routing table has a fallback row" "grep -qi 'ask which room' '$MAP'"
-while IFS='|' read -r _ task room readfirst _; do r=$(echo "$room"|grep -o '`[^`]*`'|tr -d '`'); [ -z "$r" ] && continue
+while IFS='|' read -r _ task room readfirst _; do r=$(echo "$room"|grep -o '`[^`]*`'|tr -d '`'); [ -z "$r" ] && continue; r="${r/#\~/$HOME}"
   for f in $(echo "$readfirst"|grep -o '`[^`]*`'|tr -d '`'); do check "route '$(echo $task|xargs)' → $r$f exists" "[ -e '${r%/}/$f' ]"; done
 done < <(rows)
 for v in .claude/CLAUDE.md .codex/AGENTS.md .config/opencode/AGENTS.md .gemini/GEMINI.md .agents/AGENTS.md; do
@@ -41,6 +41,8 @@ check "map forbids editing itself from a session" "grep -qi 'never edit this fil
 check "session template has 'Where the AI went its own way'" "grep -q '^## Where the AI went its own way' inbox/_template.md"
 check "session template has 'Files read'" "grep -q '^## Files read' inbox/_template.md"
 check "inbox/sessions/ exists" "[ -d inbox/sessions ]"
+check "session notes are git-ignored (the repo is public)" "git -C '$DOT' check-ignore -q context/inbox/sessions/probe.md"
+check "map warns that it is public" "grep -qi 'this file is public' '$MAP'"
 
 echo "Live links (Mac only, after ./rebuild.sh)"
 for v in "$HOME/.claude/CLAUDE.md" "$HOME/.codex/AGENTS.md" "$HOME/.gemini/GEMINI.md" "$HOME/.agents/AGENTS.md" "$HOME/context/inbox"; do
