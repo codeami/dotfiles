@@ -4,6 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>One captain, many crews, one chart room</title>
+<script type="application/json" data-lavish-revisions>
+[{ "id": "r1", "label": "Round 1", "timestamp": "2026-10-07T12:00:00Z", "summary": "Credited the drift check to Substrate (Kay Kumar, shown by Jake Van Clief); added the two-graph figure, the five gap kinds and where updates go" }]
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -52,7 +55,7 @@ svg .arrowhead.hi{fill:var(--accent)}
 
 <h1>One captain, many crews, one chart room</h1>
 <p class="sub">How I fit Kun Chen's agent factory together with plain-file context, and how I keep the agents doing what I actually meant</p>
-<p class="status">Draft 2 · post 2 in the "everything is a file" series · review in Lavish</p>
+<p class="status">Draft 3 · post 2 in the "everything is a file" series · review in Lavish</p>
 
 <p>In the first post I argued that, in AI, everything is a file: write your goals, rules and context down once, in folders, and every tool reads the same thing. That covers what the agents <em>know</em>. It says nothing about how work actually gets <em>done</em> when several agents run at once, or how you notice when one of them quietly drifts from what you asked.</p>
 <p>For that I use <a href="https://github.com/kunchenguid">Kun Chen</a>'s open-source stack, built around a tool called <a href="https://github.com/kunchenguid/firstmate">FirstMate</a>. This post is about how the two halves fit together, and how I check that the agents' intent still matches mine.</p>
@@ -144,7 +147,7 @@ svg .arrowhead.hi{fill:var(--accent)}
 <h3 id="s2c">2c. Scouts: the research layer</h3>
 <p class="q">How does research happen without anyone writing code too early?</p>
 <figure id="fig-scout">
-<svg viewBox="0 0 640 250" role="img" aria-labelledby="fig-scout-title">
+<svg viewBox="0 0 640 216" role="img" aria-labelledby="fig-scout-title">
 <title id="fig-scout-title">A scout turns an open question into a report; you decide whether anything gets built</title>
 <defs><marker id="ah4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="arrowhead" d="M0,0 L10,5 L0,10 z"/></marker></defs>
 <g id="scout-question"><title>An open question that could change whether or what to build</title><rect class="box" x="10" y="30" width="140" height="64" rx="8"/><text class="t" x="80" y="58" text-anchor="middle">Open question</text><text class="s" x="80" y="78" text-anchor="middle">"has this been built?"</text></g>
@@ -215,7 +218,7 @@ svg .arrowhead.hi{fill:var(--accent)}
 <p class="q">Did the agent do what I meant, not just what it heard?</p>
 <p>No single tool answers that. Four checks at four time scales do.</p>
 <figure id="fig-checks">
-<svg viewBox="0 0 640 170" role="img" aria-labelledby="fig-checks-title">
+<svg viewBox="0 0 640 140" role="img" aria-labelledby="fig-checks-title">
 <title id="fig-checks-title">Four alignment checks on a timeline</title>
 <path class="edge" d="M30 60 H610"/>
 <g id="check-brief"><title>Before work: read the brief the first mate handed on</title><circle cx="80" cy="60" r="9" class="box hi"/><text class="t" x="80" y="36" text-anchor="middle">brief</text><text class="s" x="80" y="92" text-anchor="middle">before work</text><text class="s" x="80" y="110" text-anchor="middle">read what was</text><text class="s" x="80" y="126" text-anchor="middle">handed on</text></g>
@@ -225,7 +228,7 @@ svg .arrowhead.hi{fill:var(--accent)}
 </svg>
 </figure>
 <table>
-<tr><th></th><th><code>/stow</code> (FirstMate)</th><th>backpass (Kun Chen)</th><th>drift (idea, not built)</th></tr>
+<tr><th></th><th><code>/stow</code> (FirstMate)</th><th>backpass (Kun Chen)</th><th>Substrate-style drift check (idea, not built here)</th></tr>
 <tr><td>Question</td><td>What did the captain tell us that we must not forget?</td><td>Which rules are missing or causing harm, across all tools?</td><td>Where did the model go its own way in this conversation?</td></tr>
 <tr><td>Reads</td><td>the current session</td><td>session logs from Claude, Codex, Pi, OpenCode and others</td><td>one conversation</td></tr>
 <tr><td>Writes</td><td>preferences (kept) and lessons (expire unless re-confirmed)</td><td>proposed edits to <code>AGENTS.md</code> files</td><td>a list of divergences</td></tr>
@@ -234,7 +237,49 @@ svg .arrowhead.hi{fill:var(--accent)}
 <tr><td>Status for me</td><td>works; I run it by hand</td><td>installed; last I checked, blocked on my Claude/Codex logins</td><td>queued as a design question inside FirstMate</td></tr>
 </table>
 <p><strong>Should they be one tool?</strong> I don't think so, and FirstMate's own research agrees. They hold different kinds of thing with different authority: <code>/stow</code> stores your words (preferences are kept for good; operational lessons expire unless re-confirmed); backpass edits rules, only with quoted evidence and your sign-off; a divergence log is the model's mistakes, which is evidence, not instruction. Merge them and a model's guess could end up with the authority of something you said. So they stay separate, and meet in one place: the morning review.</p>
-<p>The drift idea comes from Kay Kumar's research tool Substrate, shown in Jake Van Clief's video. It maps what the user meant and what the model decided as two graphs, then lists the gaps. In this setup the cheapest version is one heading in the end-of-session notes: "where the AI went its own way".</p>
+<p>The third column needs its own explanation, because it's the one that compares the two sides directly.</p>
+</section>
+
+<section id="s5a" data-lavish-revision="r1">
+<h3>5a. The drift check: two graphs, one gap</h3>
+<p class="q">Where exactly did the agent stop doing what I meant?</p>
+<p>This idea comes from <strong>Substrate</strong>, a research tool by Kay Kumar that Jake Van Clief (author of the ICM paper) demonstrates in <a href="https://www.youtube.com/watch?v=956DPSPX4wg">"You're Automating The Wrong Layer"</a>. It reads a chat turn by turn and draws <strong>two graphs</strong> from the same small set of building blocks (goal, constraint, assumption, decision, entity, example): one for what the person meant, one for what the model decided. Then it lines them up and lists the gaps, which is the drift, alongside the moments where the two got back in sync.</p>
+<figure id="fig-drift">
+<svg viewBox="0 0 640 330" role="img" aria-labelledby="fig-drift-title">
+<title id="fig-drift-title">What you meant versus what the agent did, with the gaps between them</title>
+<defs><marker id="ah8" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="arrowhead" d="M0,0 L10,5 L0,10 z"/></marker></defs>
+<g id="drift-user"><title>The user's graph: what the person meant</title><rect class="box" x="10" y="10" width="270" height="200" rx="10"/><text class="t" x="145" y="34" text-anchor="middle">What you meant</text></g>
+<g id="drift-u-goal"><title>Goal: tighten the paragraph</title><rect class="box hi" x="26" y="48" width="238" height="40" rx="6"/><text class="s" x="145" y="73" text-anchor="middle">GOAL · tighten the paragraph</text></g>
+<g id="drift-u-tone"><title>Constraint: keep my conversational tone</title><rect class="box hi" x="26" y="102" width="238" height="40" rx="6"/><text class="s" x="145" y="127" text-anchor="middle">CONSTRAINT · keep my tone</text></g>
+<g id="drift-u-meaning"><title>Constraint: keep what each claim means</title><rect class="box hi" x="26" y="156" width="238" height="40" rx="6"/><text class="s" x="145" y="181" text-anchor="middle">CONSTRAINT · keep the meaning</text></g>
+<g id="drift-model"><title>The model's graph: what the agent decided and did</title><rect class="box" x="360" y="10" width="270" height="200" rx="10"/><text class="t" x="495" y="34" text-anchor="middle">What the agent did</text></g>
+<g id="drift-m-short"><title>Decision: cut the length in half</title><rect class="box" x="376" y="48" width="238" height="40" rx="6"/><text class="s" x="495" y="73" text-anchor="middle">DECISION · cut length in half</text></g>
+<g id="drift-m-formal"><title>Decision: switched to a formal register nobody asked for</title><rect class="box warn" x="376" y="102" width="238" height="40" rx="6"/><text class="s" x="495" y="127" text-anchor="middle">DECISION · went formal</text></g>
+<g id="drift-m-rewrite"><title>Action: rewrote "lags the headline numbers" as "lags stated targets"</title><rect class="box warn" x="376" y="156" width="238" height="40" rx="6"/><text class="s" x="495" y="181" text-anchor="middle">ACTION · reworded a claim</text></g>
+<g id="drift-gap-ok"><title>Match: the goal was met</title><path class="edge" d="M264 68 H376" style="stroke:var(--ok)"/><text class="lbl" x="320" y="62" text-anchor="middle">match</text></g>
+<g id="drift-gap-added"><title>Gap type "added": the model added something nobody asked for</title><path class="edge dash" d="M264 122 H376" style="stroke:var(--warn)"/><text class="lbl" x="320" y="116" text-anchor="middle">added</text></g>
+<g id="drift-gap-drifted"><title>Gap type "drifted": the meaning changed while restating</title><path class="edge dash" d="M264 176 H376" style="stroke:var(--warn)"/><text class="lbl" x="320" y="170" text-anchor="middle">drifted</text></g>
+<g id="drift-out"><title>What happens to the gaps</title><path class="edge" d="M320 210 V236"/><path class="edge" d="M160 236 H480"/><path class="edge" d="M160 236 V256" marker-end="url(#ah8)"/><path class="edge" d="M480 236 V256" marker-end="url(#ah8)"/></g>
+<g id="drift-rules"><title>Gaps that repeat across sessions become proposed rules for AGENTS.md, which you approve</title><rect class="box ok" x="30" y="260" width="260" height="58" rx="8"/><text class="t" x="160" y="284" text-anchor="middle">Rules → AGENTS.md</text><text class="s" x="160" y="303" text-anchor="middle">repeated gaps, you approve</text></g>
+<g id="drift-now"><title>Goals, constraints and decisions go to the "Now" section of the room's or project's CONTEXT.md, which you approve</title><rect class="box ok" x="350" y="260" width="260" height="58" rx="8"/><text class="t" x="480" y="284" text-anchor="middle">Goals → CONTEXT.md "Now"</text><text class="s" x="480" y="303" text-anchor="middle">current state, you approve</text></g>
+</svg>
+<figcaption>Jake's "tighten this paragraph" example. Top half: what Substrate shows. Bottom half: my proposal for where the results go.</figcaption>
+</figure>
+<p>To be clear about who did what: the two graphs and the list of gaps are what the demo shows. Turning those gaps into instruction updates is <em>my</em> proposal; the demo doesn't do that part. My version sorts every gap into one of five kinds:</p>
+<table>
+<tr><th>Kind</th><th>What it means</th><th>Example</th></tr>
+<tr><td><strong>dropped</strong></td><td>something you asked for that never happened</td><td>"avoid long road transfers" quietly ignored</td></tr>
+<tr><td><strong>weakened</strong></td><td>a hard limit treated as a soft wish</td><td>"under ₹50k" became "roughly ₹50k"</td></tr>
+<tr><td><strong>added</strong></td><td>something nobody asked for</td><td>switched to a formal tone</td></tr>
+<tr><td><strong>drifted</strong></td><td>the meaning changed while restating</td><td>"lags the headline numbers" became "lags stated targets"</td></tr>
+<tr><td><strong>violated</strong></td><td>an action broke a stated limit</td><td>deployed to production during a staging task</td></tr>
+</table>
+<p>The results go to two different places, because they're different kinds of thing:</p>
+<ul>
+<li><strong>Rules</strong> (how agents should work, such as "keep my register unless I ask") go to <code>AGENTS.md</code>, but only when the same gap repeats, and only after I approve. That's backpass's evidence bar.</li>
+<li><strong>Current state</strong> (this project's goals, hard and soft limits, decisions made) goes to a short "Now" section at the top of the room's or project's <code>CONTEXT.md</code>, also after I approve.</li>
+</ul>
+<p>For now the cheapest version is one heading in the end-of-session notes: "where the AI went its own way". If that proves too weak, a proper extractor becomes a scout job for FirstMate.</p>
 </section>
 
 <section id="s6">
