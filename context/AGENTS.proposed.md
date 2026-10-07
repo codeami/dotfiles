@@ -32,9 +32,10 @@ file was actually loaded.)
    CLIs or heavy MCP schemas. Don't re-read files you have already read.
 2. **Report what you read.** At the end of any task, list the files you
    actually read. A file existing is not the same as a file being read.
-3. **Plain-text diagrams by default.** Folder trees and arrows (`A → B → C`)
-   in a code block. Use Mermaid only when a graph has branches that plain
-   text can't show clearly (roughly more than 8 nodes).
+3. **Review in Lavish.** Anything I review (blog posts, plans, explanations)
+   is an HTML page opened with `npx -y lavish-axi <file>.html`; read the
+   matching `lavish-axi playbook` first. Figures there are inline SVG;
+   plain-text trees and arrows in markdown notes.
 4. **Keep the first version small.** One working path end to end, with a
    basic test, before adding features, folders or automation.
 5. **Plain English.** Short sentences. No hype. Say when something is a guess.
@@ -47,7 +48,7 @@ file was actually loaded.)
 
 | Task | Go to | Read first | Output to |
 |------|-------|------------|-----------|
-| Write or edit a blog post | `areas/blog/` | `CONTEXT.md`, `voice.md` | `areas/blog/drafts/` |
+| Write or edit a blog post | `areas/blog/` | `CONTEXT.md`, `voice.md` | `areas/blog/drafts/<slug>.html` |
 | Software factory / FirstMate work | `areas/factory/` | `CONTEXT.md` | the project repo (via a worktree) |
 | Anthropic architect cert prep | `areas/cert-prep/` | `CONTEXT.md` | `areas/cert-prep/notes/` |
 | Research and learning notes | `../second-brain/` | `AGENTS.md`, `CONTEXT.md` | that folder's `inbox/` |
@@ -62,7 +63,7 @@ Room paths are relative to `~/context/` (a link to `dotfiles/context/`).
 - **Factory:** `firstmate` (dispatcher), `treehouse` (worktree pool),
   `gnhf` (overnight loops), `no-mistakes` (pre-push gate), `backpass`
   (proposes AGENTS.md edits from transcripts; never writes until I apply).
-- **Review:** `lavish-axi` for HTML/diagram review with me.
+- **Review:** `lavish-axi` for every draft I review (see rule 3).
 - **Cost:** `quota-axi` before long runs.
 
 ## Naming
