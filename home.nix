@@ -143,6 +143,9 @@ in
     config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/AGENTS.md";
   home.file.".gemini/GEMINI.md".source =
     config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/AGENTS.md";
+  # backpass (user scope) edits the first of ~/.agents, ~/.claude, ~/.codex it finds: keep it on the map
+  home.file.".agents/AGENTS.md".source =
+    config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/AGENTS.md";
 
   # Rooms, inbox and tests for the shared agent context (see context/README.md)
   home.file."context".source =

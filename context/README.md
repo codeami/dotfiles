@@ -3,6 +3,7 @@
 Part of `dotfiles`. The **map** (base context every agent loads) is
 `dotfiles/home/AGENTS.md`; this folder holds everything the map routes to.
 `home.nix` links it to `~/context`.
+For a full list of what lives where and when it's used, see `WHERE.md`.
 
 ```
 dotfiles/
@@ -23,6 +24,7 @@ dotfiles/
 | Codex | `~/.codex/AGENTS.md` | → `home/AGENTS.md` |
 | OpenCode | `~/.config/opencode/AGENTS.md` | → `home/AGENTS.md` |
 | Gemini CLI | `~/.gemini/GEMINI.md` | → `home/AGENTS.md` |
+| backpass (user scope) | first of `~/.agents/AGENTS.md`, `~/.claude/CLAUDE.md`, `~/.codex/AGENTS.md` | `~/.agents/AGENTS.md` → `home/AGENTS.md` |
 | Pi | its global instructions file (check Pi docs) | add a line when known |
 | FirstMate crew | whatever their harness reads (they are Claude Code / Codex / Pi) | nothing extra |
 | Claude Desktop chat, claude.ai, Gemini web | no local file | paste the map into a Project, or later the `context-icm` MCP server |

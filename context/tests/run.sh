@@ -28,7 +28,7 @@ check "routing table has a fallback row" "grep -qi 'ask which room' '$MAP'"
 while IFS='|' read -r _ task room readfirst _; do r=$(echo "$room"|grep -o '`[^`]*`'|tr -d '`'); [ -z "$r" ] && continue
   for f in $(echo "$readfirst"|grep -o '`[^`]*`'|tr -d '`'); do check "route '$(echo $task|xargs)' → $r$f exists" "[ -e '${r%/}/$f' ]"; done
 done < <(rows)
-for v in .claude/CLAUDE.md .codex/AGENTS.md .config/opencode/AGENTS.md .gemini/GEMINI.md; do
+for v in .claude/CLAUDE.md .codex/AGENTS.md .config/opencode/AGENTS.md .gemini/GEMINI.md .agents/AGENTS.md; do
   check "home.nix links ~/$v to home/AGENTS.md" "grep -A1 -F '\"$v\"' '$DOT/home.nix' | grep -q 'home/AGENTS.md'"; done
 check "home.nix links ~/context to dotfiles/context" "grep -A1 -E 'home.file.\"context\"' '$DOT/home.nix' | grep -q '/context\"'"
 check "no room repeats the base ('Who I am' only in the map)" "! grep -rlq '^## Who I am' areas"
@@ -43,6 +43,6 @@ check "session template has 'Files read'" "grep -q '^## Files read' inbox/_templ
 check "inbox/sessions/ exists" "[ -d inbox/sessions ]"
 
 echo "Live links (Mac only, after ./rebuild.sh)"
-for v in "$HOME/.claude/CLAUDE.md" "$HOME/.codex/AGENTS.md" "$HOME/.gemini/GEMINI.md" "$HOME/context/inbox"; do
+for v in "$HOME/.claude/CLAUDE.md" "$HOME/.codex/AGENTS.md" "$HOME/.gemini/GEMINI.md" "$HOME/.agents/AGENTS.md" "$HOME/context/inbox"; do
   [ -e "$v" ] && ok "$v present" || note "$v not linked yet"; done
 echo; echo "passed $pass · failed $fail · warnings $warn"; [ $fail -eq 0 ]
