@@ -11,8 +11,10 @@ Work on any repo through FirstMate and Kun Chen's tools.
    `CLAUDE.md` containing only `@AGENTS.md`.
 
 ## Optional skills
-- `mattpocock/skills` (`npx skills@latest add mattpocock/skills`, then `/setup-matt-pocock-skills`
-  per repo). Try `/grill-me` first. Its `CONTEXT.md` is a project glossary, not a room file.
-  Use either its `/code-review` or `no-mistakes` per project, not both.
+- `mattpocock/skills` v1.3+ (`npx skills@latest add mattpocock/skills`, then
+  `/setup-matt-pocock-skills` per repo). Try `/grill-me` first. Its project glossary is
+  `GLOSSARY.md` (no clash with room `CONTEXT.md`). Pick `/code-review` or `no-mistakes`
+  per project, not both. `/retro` (per session) complements backpass (across sessions).
+  `/implement-spec` uses built-in subagents: run it inside one crewmate, never from the first mate.
 
 ## Projects

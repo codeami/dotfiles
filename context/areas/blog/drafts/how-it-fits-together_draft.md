@@ -140,12 +140,18 @@ The "drift" idea comes from Kay Kumar's research tool Substrate, from Jake Van C
 
 Not everyone needs a fleet. Matt Pocock's [skills](https://github.com/mattpocock/skills) take a different route to the same problem. Instead of orchestrating many agents, they give one agent better habits, packaged as skills you install into a repo: `npx skills@latest add mattpocock/skills`, then `/setup-matt-pocock-skills` once per repo (Claude Code can also install it as a plugin).
 
-A few of them:
+The core flow:
 
 - `/grill-me`: the agent interviews you about your plan until every open question is resolved.
 - `/to-spec`: turns a discussion into a tracked spec.
-- `/implement`: builds a feature with test-driven development and code-review gates.
+- `/implement`: builds one ticket with test-driven development and a code-review gate.
 - `/tdd`, `/diagnosing-bugs`, `/code-review`, `/domain-modeling`.
+
+[Version 1.3](https://github.com/mattpocock/skills/blob/main/CHANGELOG.md) added three that land right on the themes of this post:
+
+- `/implement-spec` builds a whole spec in one run. It treats the tickets as a task graph, runs implementer subagents in their own worktrees, and merges everything onto one integration branch. That's a small, single-repo cousin of what FirstMate does across projects.
+- `/retro` looks back at a coding session and suggests changes to the agent's *environment* rather than the code: steering files, pointers, automated checks, coding standards. A mechanical mistake gets a deterministic check (a lint rule, a pre-commit hook, a CI job); only genuine judgement calls go into a standards file. That's the same job as backpass, from a different angle.
+- `/pr` writes the pull-request description: the smallest diagram that explains the change, before/after evidence, and a "one-way or two-way door" call on how risky the merge is.
 
 How it lines up with the rest:
 
@@ -154,14 +160,16 @@ How it lines up with the rest:
 | Main idea | many agents, isolated, checked before shipping | the right files in front of the agent | good engineering habits as reusable procedures |
 | Unit of work | a crewmate with a brief | a room with a `CONTEXT.md` | a skill you call with `/name` |
 | In the map / rooms / tools picture | the crew | the map and the rooms | the tools |
-| How it protects intent | brief, pre-push gate, backpass | explicit routing, "files read" | `/grill-me` before work, specs, tests first |
+| Learning from sessions | backpass: many sessions, quoted evidence, proposes rule edits | end-of-session notes | `/retro`: one session, proposes environment changes, prefers automated checks |
+| Protecting intent | brief, pre-push gate | explicit routing, "files read" | `/grill-me` before work, specs, tests first |
 
-Two things to know before mixing them:
+Three things to know before mixing them:
 
-1. **Same filename, different job.** In Matt's repo, `CONTEXT.md` is a glossary of the project's own terms (the domain-driven-design idea that developers and code should share one language). In Jake's method, `CONTEXT.md` explains how a kind of work gets done. Both are useful. Keep them apart (his in the project repo, mine in `~/context/areas/`) and say which is which in the map. A v1.3 release reportedly renames his file to `GLOSSARY.md`; I couldn't confirm that yet, as the releases page still shows v1.2.3 as the latest.
-2. **Don't pay for two reviews.** `/code-review` and no-mistakes both review code before it lands. Pick one per project.
+1. **The filename clash is gone.** Up to v1.2 his skills kept a project glossary in `CONTEXT.md`, the same name Jake uses for "how this kind of work is done". Version 1.3 renamed it to `GLOSSARY.md` (with `GLOSSARY-MAP.md` for repos with several areas). If you set up an older version, `git mv CONTEXT.md GLOSSARY.md`; the skills only look for the new name now.
+2. **Subagents vs crewmates.** `/implement-spec` uses the agent's built-in subagents, which FirstMate deliberately blocks in its orchestrator (section 3). Run it inside a single crewmate's task, or on its own outside FirstMate, not from the first mate.
+3. **Don't pay twice.** `/code-review` overlaps with no-mistakes, and `/retro` overlaps with backpass. They're complementary rather than identical (`/retro` is fast and per-session; backpass waits for repeats across tools), but pick deliberately per project.
 
-The skill I'd try first is `/grill-me`, because it attacks intent drift from the other end. backpass and the drift idea notice where the model went its own way after the fact. Grilling makes the agent ask before it starts, which is the cheapest moment to catch a hard limit about to become a soft one.
+The skill I'd try first is still `/grill-me`, because it attacks intent drift from the other end. backpass, `/retro` and the drift idea all notice afterwards where the model went its own way. Grilling makes the agent ask before it starts, which is the cheapest moment to catch a hard limit about to become a soft one.
 
 ## 7. The whole loop
 
