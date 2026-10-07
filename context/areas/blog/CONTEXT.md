@@ -13,9 +13,11 @@ Every draft is reviewed in Lavish (Kun Chen's lavish-axi).
    `<title>` on every part so I can comment on it). Mermaid only if I ask
    for an editable whiteboard.
 5. Check light, dark and phone width before handing over.
-6. Open it for me: `npx -y lavish-axi drafts/<slug>.html`, then wait for my
-   comments with `npx -y lavish-axi poll drafts/<slug>.html`. Mark what you
-   changed in each round (Lavish revision markers).
+6. Open it for me with `~/context/bin/blog open <slug>` (or the board with
+   `~/context/bin/blog`), then wait for my comments with
+   `lavish-axi poll drafts/<slug>.html`. In FirstMate, the first mate arms its
+   own Lavish watcher instead, so my comments wake it. Mark what you changed
+   in each round (Lavish revision markers).
 7. Every claim that can be checked gets a "Test:" line or a source link.
 8. Never publish. `lavish-axi export` makes a standalone copy when I'm ready.
 

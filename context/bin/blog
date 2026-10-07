@@ -1,0 +1,93 @@
+#!/usr/bin/env bash
+# blog: review blog drafts in Lavish, the way FirstMate reviews its boards.
+#
+#   blog                 list drafts, rebuild the board, open the board in Lavish
+#   blog open <slug>     open one post for review (comments go back to the agent)
+#   blog board           rebuild drafts/index.html only (no browser)
+#   blog export <slug>   write a standalone copy to drafts/export/<slug>.html
+#   blog stop            stop the local Lavish server
+#
+# Lavish starts its local server on demand and stops it when idle; nothing
+# runs in the background between reviews. Drafts live in ~/context/areas/blog/drafts/.
+set -euo pipefail
+DRAFTS="$(cd "$(dirname "$0")/../areas/blog/drafts" && pwd)"
+if command -v lavish-axi >/dev/null 2>&1; then LAVISH=(lavish-axi); else LAVISH=(npx -y lavish-axi); fi
+
+build_board() {
+  python3 - "$DRAFTS" <<'PY'
+import sys, os, re, html, datetime
+d = sys.argv[1]
+def grab(pat, s, default=""):
+    m = re.search(pat, s, re.S | re.I)
+    return html.unescape(re.sub(r"<[^>]+>", "", m.group(1))).strip() if m else default
+posts = []
+for name in sorted(os.listdir(d)):
+    p = os.path.join(d, name)
+    if name == "index.html" or not os.path.isfile(p): continue
+    slug, ext = os.path.splitext(name)
+    if ext == ".html":
+        s = open(p, encoding="utf-8").read()
+        posts.append(dict(slug=slug, file=name, kind="lavish",
+            title=grab(r"<title>(.*?)</title>", s, slug),
+            sub=grab(r'class="sub"[^>]*>(.*?)</p>', s),
+            status=grab(r'class="status"[^>]*>(.*?)</p>', s),
+            mtime=os.path.getmtime(p)))
+    elif ext == ".md" and not os.path.exists(os.path.join(d, slug.replace("_draft", "") + ".html")):
+        s = open(p, encoding="utf-8").read()
+        posts.append(dict(slug=slug, file=name, kind="markdown",
+            title=(re.search(r"^#\s+(.*)$", s, re.M) or [None, slug])[1],
+            sub="", status="Markdown only: not yet a Lavish page", mtime=os.path.getmtime(p)))
+posts.sort(key=lambda x: -x["mtime"])
+cards = []
+for x in posts:
+    when = datetime.datetime.fromtimestamp(x["mtime"]).strftime("%Y-%m-%d %H:%M")
+    cmd = f"blog open {x['slug']}" if x["kind"] == "lavish" else "ask the agent to convert it"
+    cards.append(f'''<article class="card" id="post-{html.escape(x['slug'])}">
+<h2><a href="{html.escape(x['file'])}">{html.escape(x['title'])}</a></h2>
+{f'<p class="sub">{html.escape(x["sub"])}</p>' if x["sub"] else ''}
+<p class="meta"><span class="tag {x['kind']}">{x['kind']}</span> {html.escape(x['status'])} · updated {when}</p>
+<p class="cmd"><code>{html.escape(cmd)}</code></p>
+</article>''')
+page = f'''<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Blog board</title>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&family=IBM+Plex+Mono&family=IBM+Plex+Sans:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{{--ink:#1c2230;--muted:#5b6272;--paper:#f4f3ef;--panel:#fff;--line:#c9ccd3;--accent:#2f4fa8;--accent-soft:#e3e9f8;--warn:#a5521b;--warn-soft:#f7e7da}}
+@media (prefers-color-scheme:dark){{:root{{--ink:#e5e8ee;--muted:#a3a9b6;--paper:#14171d;--panel:#1c2029;--line:#3a404d;--accent:#8fa8ee;--accent-soft:#232c45;--warn:#e3a06b;--warn-soft:#3a2a1e}}}}
+*{{box-sizing:border-box}} html,body{{background:var(--paper);color:var(--ink)}}
+body{{margin:0;font-family:"IBM Plex Sans",system-ui,sans-serif;line-height:1.55}}
+main{{max-width:780px;margin:0 auto;padding:36px 16px 80px}}
+h1{{font-family:"Newsreader",Georgia,serif;font-weight:500;font-size:2rem;margin:0 0 4px}}
+.lead{{color:var(--muted);margin:0 0 24px}}
+.card{{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin:0 0 14px}}
+.card h2{{font-family:"Newsreader",Georgia,serif;font-weight:500;font-size:1.3rem;margin:0 0 4px}}
+.card h2 a{{color:var(--ink);text-decoration:none}} .card h2 a:hover{{color:var(--accent)}}
+.sub{{font-family:"Newsreader",Georgia,serif;font-style:italic;color:var(--muted);margin:0 0 8px}}
+.meta{{font-size:.85rem;color:var(--muted);margin:0 0 6px;overflow-wrap:anywhere}}
+.tag{{display:inline-block;font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;padding:1px 7px;border-radius:999px;margin-right:6px}}
+.tag.lavish{{background:var(--accent-soft);color:var(--accent)}} .tag.markdown{{background:var(--warn-soft);color:var(--warn)}}
+code{{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.85rem;background:var(--accent-soft);padding:.1em .35em;border-radius:4px}}
+.cmd{{margin:0}}
+</style></head><body><main>
+<h1>Blog board</h1>
+<p class="lead">{len(posts)} draft(s) in <code>~/context/areas/blog/drafts/</code>, newest first. Comment on a post by opening it on its own: <code>blog open &lt;slug&gt;</code>.</p>
+{chr(10).join(cards) if cards else '<p>No drafts yet.</p>'}
+</main></body></html>'''
+open(os.path.join(d, "index.html"), "w", encoding="utf-8").write(page)
+for x in posts: print(f"  {x['kind']:8}  {x['slug']:32}  {x['title']}")
+PY
+}
+
+cmd="${1:-}"
+case "$cmd" in
+  "")        echo "Drafts in $DRAFTS:"; build_board; exec "${LAVISH[@]}" "$DRAFTS/index.html" ;;
+  board)     build_board; echo "Board written: $DRAFTS/index.html" ;;
+  open)      f="$DRAFTS/${2:?usage: blog open <slug>}.html"; [ -f "$f" ] || { echo "No Lavish page: $f"; exit 1; }
+             build_board >/dev/null; exec "${LAVISH[@]}" "$f" ;;
+  export)    f="$DRAFTS/${2:?usage: blog export <slug>}.html"; mkdir -p "$DRAFTS/export"
+             exec "${LAVISH[@]}" export "$f" --out "$DRAFTS/export/$2.html" ;;
+  stop)      exec "${LAVISH[@]}" stop ;;
+  -h|--help|help) sed -n '2,12p' "$0" ;;
+  *)         echo "unknown command: $cmd (try: blog help)"; exit 1 ;;
+esac

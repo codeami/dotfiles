@@ -51,7 +51,9 @@ backpass reads those logs   ──►  proposes edits to home/AGENTS.md  ──�
 | `areas/blog/CONTEXT.md` | How a blog post is made here | Agent, when the route says "blog" | Every blog task | live |
 | `areas/blog/voice.md` | Your tone rules (kept short, grows from feedback) | Agent on blog tasks; you edit | Every blog task | live |
 | `areas/blog/template.md` | Section layout for posts | Agent on blog tasks | New post | live |
-| `areas/blog/drafts/` | Drafts + `img/` frames | Agent writes, you edit | During writing | live |
+| `areas/blog/drafts/<slug>.html` | Each post as a Lavish review page | Agent writes; you comment in Lavish | During writing | live |
+| `areas/blog/drafts/index.html` | The blog board (generated, git-ignored) | `bin/blog` rebuilds it | Every `blog` run | live |
+| `bin/blog` | `blog` (board) · `blog open <slug>` · `blog export <slug>` · `blog stop` | You | Reviewing drafts | live |
 | `areas/factory/CONTEXT.md` | How coding work goes through FirstMate and Kun's tools | Agent on factory tasks | Every factory task | live |
 | `areas/cert-prep/CONTEXT.md`, `notes/` | Cert topics mapped to things you've built; one note per topic | Agent on cert tasks | Study sessions | live |
 | `inbox/_template.md` | Shape of an end-of-session note | Agent | At "end of session" | live |
