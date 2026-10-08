@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# chain-check: check one run folder of the factory chain (areas/factory).
+#   chain-check data/<task-id>      needs 01-intent.md; checks 02-spec.md when present
+# Exit 0 = pass. Prints "ask:" lines when the 02 gate should involve the captain.
+set -u
+d="${1:?usage: chain-check <run-folder>}"; i="$d/01-intent.md"; s="$d/02-spec.md"; rc=0
+bad(){ echo "FAIL  $1"; rc=1; }
+[ -f "$i" ] || { bad "no 01-intent.md in $d"; exit 1; }
+[ -f "$s" ] || { echo "ok    01 only (no 02-spec.md yet)"; exit 0; }
+head -5 "$i" | grep -q '^approved: [0-9-]' || bad "01-intent.md has no 'approved: <date>' line; 02 must not start"
+ids=$(awk '/^## Captain/{c=1;next} /^## /{c=0} c&&/^I[0-9]+:/{sub(/:.*/,"");print}' "$i")
+[ -n "$ids" ] || bad "01-intent.md has no I lines under \"Captain's words\""
+for a in $(awk '/^A[0-9]+[ :(]/{sub(/[:(].*/,"");print $1}' "$s"); do
+  grep -q "^$a (" "$s" || { bad "$a cites no I (write '$a (I1): ...' or '$a (derived: why): ...')"; continue; }
+  line=$(grep -m1 "^$a (" "$s"); cite=${line#*(}; cite=${cite%%)*}
+  case "$cite" in derived:*) echo "ask:  $a is derived ($cite)"; continue;; esac
+  for r in $(echo "$cite" | tr -d ' ' | tr ',' ' '); do
+    echo "$ids" | grep -qx "$r" || bad "$a cites '$r', which is not an I line in 01-intent.md"; done
+done
+grep -q '^A[0-9]* (' "$s" || bad "02-spec.md has no criteria (lines like 'A1 (I1): ...')"
+for r in $ids; do grep -q "\b$r\b" "$s" || { bad "$r is not covered, out of scope or open in 02-spec.md"; echo "ask:  $r uncovered"; }; done
+[ $rc -eq 0 ] && echo "ok    $d"; exit $rc

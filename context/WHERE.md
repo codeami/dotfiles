@@ -54,11 +54,14 @@ backpass reads those logs   ──►  proposes edits to home/AGENTS.md  ──�
 | `areas/blog/drafts/<slug>.html` | Each post as a Lavish review page | Agent writes; you comment in Lavish | During writing | live |
 | `areas/blog/drafts/index.html` | The blog board (generated, git-ignored) | `bin/blog` rebuilds it | Every `blog` run | live |
 | `bin/blog` | `blog` (board) · `blog open <slug>` · `blog export <slug>` · `blog stop` | You | Reviewing drafts | live |
-| `areas/factory/CONTEXT.md` | How coding work goes through FirstMate and Kun's tools | Agent on factory tasks | Every factory task | live |
+| `areas/factory/CONTEXT.md` | The factory chain in one screen: 8 stages, owners, gates | Agent on factory tasks | Every factory task | live |
+| `areas/factory/01-intent/`, `02-spec/` | Full stage contracts (inputs, process, outputs, human gate); stages 03 to 08 are router rows | Agent, at that stage | Every factory task | live |
+| `bin/chain-check` | `chain-check data/<task-id>`: checks a run's intent and spec (ids, approval, coverage) | Agent at 02; you | After writing `02-spec.md` | live |
 | `areas/cert-prep/CONTEXT.md`, `notes/` | Cert topics mapped to things you've built; one note per topic | Agent on cert tasks | Study sessions | live |
 | `inbox/_template.md` | Shape of an end-of-session note | Agent | At "end of session" | live |
 | `inbox/sessions/` | One note per session: goals, constraints, decisions, where the AI went its own way, files read | Agent writes; you skim; backpass sees them inside the session logs | Written at "end of session"; skimmed each morning | rebuild |
 | `tests/run.sh` | 32 structure checks (blog sections 1–3), no tokens | You | After editing the map, a room, or `home.nix` | live |
+| `tests/chain.sh` | 9 checks on the factory chain (T1 to T9) with fixtures in `tests/fixtures/chain/`, no tokens | You | After editing `areas/factory/` or `bin/chain-check` | live |
 | `tests/e2e-probe.sh` | Asks each installed agent for the canary from an empty folder | You (costs a few tokens) | After `./rebuild.sh`, or when an agent seems to ignore the map | rebuild |
 
 ## 4. Links in `~` (made by `./rebuild.sh`, never edit them directly)
