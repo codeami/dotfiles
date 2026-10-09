@@ -1,0 +1,194 @@
+#!/usr/bin/env python3
+"""plain-check: form checks for plain STE (80%), rules R1-R9 in areas/factory/references/ste.md.
+
+    plain-check [--force] FILE...
+
+Prints `file:line rule-id message` per finding, then one summary line per file. Read-only.
+Exit 0 when hard findings are 0 and soft findings are at most 2 per 100 words (after masking),
+1 when a file fails, 2 on bad input or a refused path. Files under areas/blog/ need --force.
+Masked before counting: fences, `code` (one word), > quotes, "quotes", URLs, paths, [S]/[3P]/[J]/[?]
+tags, table rows, <!-- ste:off --> to <!-- ste:on -->. It checks form only, never facts.
+Limits are third-party until the official standard is read. Standard library, Python 3.9+.
+"""
+import os
+import re
+import sys
+
+MAX_WORDS, MAX_STEP, MAX_SENTENCES, SOFT_PER_100 = 25, 20, 6, 2
+ABBREV = r"(?:e\.g\.|i\.e\.|etc\.|et al\.|viz\.|vs\.)"
+
+
+def stems(*forms):
+    return r"\b(?:" + "|".join(forms) + r")\b"
+
+
+PLAIN = [(stems("utili[sz]e[sd]?", "utili[sz]ing"), "use"), (stems("commences?", "commenced", "commencing"), "start"),
+         (stems("initiat(?:e[sd]?|ing)"), "start"), (stems("prior to"), "before"), (stems("in order to"), "to"),
+         (stems("ensur(?:e[sd]?|ing)"), "make sure"), (stems("subsequent to"), "after"), (stems("in the event that"), "if"),
+         (stems("due to the fact that"), "because"), (stems("at this point in time"), "now"), (stems("a number of"), "some"),
+         (stems("make use of", "makes use of", "made use of"), "use"), (stems("for the purpose of"), "for"),
+         (stems("the majority of"), "most"), (stems("in the case of"), "for"), (stems("is able to", "are able to"), "can"),
+         (stems("facilitat(?:e[sd]?|ing)"), "help"), (stems("endeavou?r(?:s|ed|ing)?"), "try"),
+         (stems("purchas(?:e[sd]?|ing)"), "buy"), (stems("sufficient"), "enough"), (stems("numerous"), "many"),
+         (stems("assist(?:s|ed|ing)?"), "help"), (stems("demonstrat(?:e[sd]?|ing)"), "show"),
+         (stems("attempt(?:s|ed|ing)?"), "try"), (stems("obtain(?:s|ed|ing)?"), "get"), (stems("locat(?:e[sd]?|ing)"), "find"),
+         (stems("leverag(?:e[sd]?|ing)"), "use"), (stems("regarding"), "about")]
+PHRASAL = re.compile(stems(r"spin(?:s|ning)? (?:up|down)", r"kick(?:s|ed|ing)? off", r"dive[sd]? into", r"reach(?:es|ed|ing)? out",
+                           r"circle back", r"drill(?:s|ed|ing)? down", r"wrap(?:s|ped|ping)? up", r"figure[sd]? out",
+                           r"roll(?:s|ed|ing)? out", r"dig(?:s|ging)? into"), re.I)
+GROUPS = [("check", "verify", "confirm"), ("start", "launch", "begin"), ("show", "display"), ("stop", "halt")]
+PARTICIPLES = ("built|done|made|written|run|sent|given|shown|held|kept|left|taken|chosen|broken|known|seen|found|"
+               "hidden|driven|forgotten|read|put|told|set")
+PASSIVE = re.compile(r"\b(?:is|are|was|were|be|been|being)\s+(?:not\s+|\w+ly\s+)?(?:\w{3,}ed|" + PARTICIPLES + r")\b", re.I)
+NOT_ING = {"nothing", "something", "anything", "everything", "during", "string", "thing", "king", "ring", "spring", "ceiling"}
+PROGRESSIVE = re.compile(r"\b(?:is|are|was|were|am)\s+(?:not\s+)?(\w+ing)\b", re.I)
+MASKS = [(re.compile(p), r) for p, r in (
+    (r"`[^`\n]*`", " CODE "), (r"https?://\S+", " "), (r"\[(?:S|3P|J|\?)\]", " "), (r"\"[^\"\n]*\"|“[^”\n]*”", " "),
+    (r"<!--.*?-->|<[A-Za-z/][^>\n]*>", " "), (r"(?<![\w/])(?:~|\.{1,2})?/[\w.\-~]+(?:/[\w.\-~]*)*", " "),
+    (r"\b[\w.\-]+(?:/[\w.\-]+)+\b", " "), (r"\b[\w\-]+\.(?:md|py|sh|html|json|nix|txt)\b", " "))]
+
+
+def mask_lines(lines):
+    """Return one masked string per line: protected text becomes blank, so line numbers stay true."""
+    out, fence, off = [], None, False
+    for raw in lines:
+        s = raw.strip()
+        if "<!-- ste:off -->" in s:
+            off = True
+        elif "<!-- ste:on -->" in s:
+            off = False
+            out.append("")
+            continue
+        if off or s.startswith(("<!-- ste:", "> ", ">")):
+            out.append("")
+        elif fence:
+            fence = None if s.startswith(fence) else fence
+            out.append("")
+        elif s.startswith(("```", "~~~")):
+            fence = s[:3]
+            out.append("")
+        elif s.startswith("|") or re.fullmatch(r"-{3,}", s):
+            out.append("")
+        else:
+            for rx, rep in MASKS:
+                raw = rx.sub(rep, raw)
+            out.append(raw)
+    return out
+
+
+def blocks(masked):
+    """Group masked lines into (kind, text, starts): kind is para, step, bullet or head; starts maps offsets to lines."""
+    result, cur = [], None
+    for n, line in enumerate(masked, 1):
+        m = re.match(r"\s*(?:([-*+])|(\d+[.)]))\s+(.*)", line)
+        head = re.match(r"\s*#+\s+(.*)", line)
+        if not line.strip():
+            cur = None
+        elif m or head:
+            kind = "step" if m and m.group(2) else "bullet" if m else "head"
+            cur = [kind, "", []]
+            result.append(cur)
+            cur[2].append((0, n)); cur[1] = (m.group(3) if m else head.group(1)) + " "
+            if head:
+                cur = None
+        elif cur is None:
+            cur = ["para", "", []]
+            result.append(cur)
+            cur[2].append((0, n)); cur[1] = line.strip() + " "
+        else:
+            cur[2].append((len(cur[1]), n)); cur[1] += line.strip() + " "
+    return result
+
+
+def sentences(text):
+    """Yield (offset, sentence). Latin abbreviations keep their dots; a split needs a capital or a code mark after."""
+    text = re.sub(ABBREV, lambda m: m.group(0).replace(".", "\x00"), text)
+    for m in re.finditer(r"\S.*?(?:[.!?]+(?=\s+[A-Z\"(\[C])|[.!?]+\s*$|$)", text, re.S):
+        yield m.start(), m.group(0).replace("\x00", ".")
+
+
+def count_words(s):
+    return sum(1 for w in s.split() if re.search(r"[A-Za-z0-9]", w))
+
+
+def check_text(lines):
+    masked = mask_lines(lines)
+    found, words, used = [], 0, {}  # found: (line, id, message, hard)
+    for kind, text, starts in blocks(masked):
+        def line_at(off):
+            return [n for o, n in starts if o <= off][-1]
+        sents = list(sentences(text))
+        if kind == "para" and len(sents) > MAX_SENTENCES:
+            found.append((starts[0][1], "R3", f"paragraph has {len(sents)} sentences (maximum {MAX_SENTENCES})", True))
+        for off, s in sents:
+            n, ln = count_words(s), line_at(off)
+            at = lambda m: line_at(off + m.start())
+            words += n
+            if n > MAX_WORDS:
+                found.append((ln, "R1", f"sentence has {n} words (maximum {MAX_WORDS})", True))
+            elif kind == "step" and n > MAX_STEP:
+                found.append((ln, "R1", f"step has {n} words (maximum {MAX_STEP})", False))
+            for m in re.finditer(";", s):
+                found.append((at(m), "R2", "semicolon: split into two sentences", True))
+            for rx, plain in PLAIN:
+                for m in re.finditer(rx, s, re.I):
+                    found.append((at(m), "R4", f"'{m.group(0)}': use '{plain}'", True))
+            for m in PASSIVE.finditer(s):
+                found.append((at(m), "R5", f"passive '{m.group(0)}': name who acts", False))
+            for m in PROGRESSIVE.finditer(s):
+                if m.group(1).lower() not in NOT_ING:
+                    found.append((at(m), "R6", f"progressive '{m.group(0)}': use a simple tense", False))
+            for m in PHRASAL.finditer(s):
+                found.append((at(m), "R7", f"phrasal verb '{m.group(0)}': use one plain verb", False))
+            for m in re.finditer(ABBREV, s.replace("\x00", ".")):
+                found.append((at(m), "R9", f"Latin abbreviation '{m.group(0)}': write it out", False))
+            for group in GROUPS:
+                for w in group:
+                    hit = re.search(r"\b" + w + r"(?:s|ed|es|d|ing)?\b", s, re.I)
+                    if hit:
+                        used.setdefault(group, {}).setdefault(w, line_at(off + hit.start()))
+    for group, seen in used.items():
+        if len(seen) > 1:
+            order = sorted(seen, key=seen.get)
+            found.append((seen[order[1]], "R8", f"'{order[1]}' and '{order[0]}' name one idea: pick one", False))
+    return sorted(found, key=lambda f: (f[0], f[1])), words
+
+
+def blog_path(path):
+    parts = os.path.realpath(path).split(os.sep)
+    return any(a == "areas" and b == "blog" for a, b in zip(parts, parts[1:]))
+
+
+def main(argv):
+    force = "--force" in argv
+    files = [a for a in argv if a != "--force"]
+    if not files:
+        print("usage: plain-check [--force] FILE...", file=sys.stderr)
+        return 2
+    status = 0
+    for path in files:
+        if blog_path(path) and not force:
+            print(f"plain-check: refusing {path}: areas/blog/ holds the captain's own words (use --force)", file=sys.stderr)
+            status = 2
+            continue
+        try:
+            with open(path, encoding="utf-8") as fh:
+                lines = fh.read().splitlines()
+        except (OSError, UnicodeDecodeError) as e:
+            print(f"plain-check: cannot read {path}: {e}", file=sys.stderr)
+            status = 2
+            continue
+        found, words = check_text(lines)
+        for ln, rid, msg, hard in found:
+            print(f"{path}:{ln} {rid} {'hard' if hard else 'soft'}: {msg}")
+        hard = sum(1 for f in found if f[3])
+        soft = len(found) - hard
+        good = hard == 0 and soft * 100 <= SOFT_PER_100 * words
+        print(f"{'ok' if good else 'FAIL'}: {path}: {hard} hard, {soft} soft, {words} words (code counts one, masked text zero)")
+        if not good and status == 0:
+            status = 1
+    return status
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))
