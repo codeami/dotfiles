@@ -18,4 +18,4 @@ Recommended: yes.
 Q6 [done] Question 6?
 Recommended: yes.
 CAPTAIN: yes to all
-AGENT: The frontier is empty. Is this a shared understanding?
+AGENT: The frontier is empty. I1 to I3 are in 01-intent.md in your words. Is this a shared understanding?

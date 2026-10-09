@@ -10,13 +10,17 @@
 
 Every output line is `FAIL id ...` (a problem) or `WARN id ...` (a candidate for judgement).
 Exit 1 when any FAIL is printed; a WARN never changes the exit status. Standard library, Python 3.9+.
+The seal (a 12-hex hash of the I lines) detects accidental change, not deliberate edits: anyone who can edit
+01-intent.md can run `seal` again.
 """
 from __future__ import annotations
 
 import argparse
 import datetime
 import hashlib
+import os
 import re
+import tempfile
 import subprocess
 import sys
 from pathlib import Path
@@ -27,11 +31,18 @@ NEG = {"not", "no", "never", "without", "don't", "doesn't", "cannot", "can't", "
 ONLY = {"only", "exactly", "solely"}
 BOUND = {"under", "over", "below", "above", "at most", "at least", "up to", "no more than", "less than", "more than"}
 WORD_CLASSES = (("negation", NEG), ("only", ONLY), ("bound", BOUND))
-APPROVED = re.compile(r"^approved:\s*(\d{4}-\d{2}-\d{2})(?:\s+(\S+)\s+([0-9a-f]{12})(?:\s+via\s+(.+))?)?\s*$")
+APPROVED = re.compile(r"^approved:\s*([0-9]{4}-[0-9]{2}-[0-9]{2})(?:\s+(\S+)\s+([0-9a-f]{12})\s+via\s+(\S.*?))?\s*$")
+LINE_BREAKS = re.compile("[\x00-\x1f\x7f\x85\u2028\u2029]")
+# Quoted hard words, after fold() has made curly quotes straight. A ' inside a word (person's) is no quote.
+QUOTES = (r'(?<!\w)"([^"\n]+)"', r"(?<!\w)'([^'\n]+)'(?!\w)", r"`([^`\n]+)`")
 
 
-def norm(s: str) -> str:
-    return re.sub(r"\s+", " ", s.strip())
+def is_date(s: str) -> bool:
+    try:
+        datetime.date.fromisoformat(s)
+    except ValueError:
+        return False
+    return re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", s) is not None
 
 
 def out(kind: str, cid: str, msg: str, bag: list) -> None:
@@ -56,13 +67,22 @@ def section(text: str, heading: str) -> list:
     return got
 
 
+def intent_pairs(text: str) -> list:
+    """[(id, exact text)] in file order. Only the line ending is dropped: the words are compared as written."""
+    return [(m.group(1), m.group(2)) for m in (re.match(r"^(I\d+):[ \t]*(\S.*)$", ln) for ln in section(text, "Captain")) if m]
+
+
 def intent_lines(text: str) -> dict:
-    found = {}
-    for ln in section(text, "Captain"):
-        m = re.match(r"^(I\d+):\s*(.+)$", ln.strip())
-        if m:
-            found[m.group(1)] = norm(m.group(2))
-    return found
+    return dict(intent_pairs(text))
+
+
+def duplicates(ids: list) -> list:
+    return sorted({i for i in ids if ids.count(i) > 1}, key=lambda i: int(i[1:]))
+
+
+def duplicate_intent(text: str, bag: list) -> None:
+    for iid in duplicates([i for i, _ in intent_pairs(text)]):
+        out("FAIL", "TG1", f"{iid} appears twice in \"Captain's words\": one id, one line", bag)
 
 
 def words_hash(lines: dict) -> str:
@@ -81,9 +101,9 @@ def check_intent(words: str, intent: str) -> list:
     lines = intent_lines(intent)
     if not lines:
         out("FAIL", "TG1", "01-intent.md has no I lines under \"Captain's words\"", bag)
-    said = norm(words).lower()
+    duplicate_intent(intent, bag)
     for iid, text in lines.items():
-        if not text.lower().startswith("context:") and norm(text).lower().rstrip(".") not in said:
+        if not text.lower().startswith("context:") and text not in words:
             out("FAIL", "TG1", f"{iid} is not something the captain said verbatim: \"{text}\"", bag)
     head = next((ln for ln in intent.splitlines()[:5] if ln.startswith("approved:")), None)
     if head is None:
@@ -93,7 +113,10 @@ def check_intent(words: str, intent: str) -> list:
         out("FAIL", "TG2", f"approved while a blocking question is open: {q}", bag)
     m = APPROVED.match(head.strip())
     if not m:
-        out("FAIL", "TG2", f"approved line is malformed: {head!r}", bag)
+        why = "no 'via' source" if re.match(r"^approved:\s*\S+\s+\S+\s+[0-9a-f]{12}\s*$", head) else "malformed"
+        out("FAIL", "TG2", f"approved line is {why}: {head!r}", bag)
+    elif not is_date(m.group(1)):
+        out("FAIL", "TG2", f"approved line date {m.group(1)!r} is not a calendar date", bag)
     elif m.group(3) is None:
         out("WARN", "TG2", "approved line has a date only: add who and a hash with `seal`, so a later edit shows", bag)
     elif m.group(3) != words_hash(lines):
@@ -103,22 +126,52 @@ def check_intent(words: str, intent: str) -> list:
 
 def seal(run: Path, who: str, source: str, today: str) -> str:
     p = run / "01-intent.md"
+    if p.is_symlink():
+        raise ValueError(f"refusing to seal: {p} is a symlink, and the line would be written outside the run folder")
+    for name, val in (("who", who), ("source", source)):
+        if not val.strip() or LINE_BREAKS.search(val):
+            raise ValueError(f"refusing to seal: --{name} must be one non-empty line")
+    if re.search(r"\s", who):
+        raise ValueError("refusing to seal: --who must be one word (the approved line is split on spaces)")
+    if not is_date(today):
+        raise ValueError(f"refusing to seal: {today!r} is not a calendar date (YYYY-MM-DD)")
     text = p.read_text()
     if blocking_questions(text):
         raise ValueError("refusing to seal: a blocking question is still open: " + blocking_questions(text)[0])
+    twice = duplicates([i for i, _ in intent_pairs(text)])
+    if twice:
+        raise ValueError(f"refusing to seal: {twice[0]} appears twice in \"Captain's words\"")
     body = [ln for ln in text.splitlines() if not ln.startswith("approved:")]
-    line = f"approved: {today} {who} {words_hash(intent_lines(text))} via {source}"
-    p.write_text("\n".join([line] + body) + "\n")
+    line = f"approved: {today} {who} {words_hash(intent_lines(text))} via {source.strip()}"
+    fd, tmp = tempfile.mkstemp(dir=run, prefix=".01-intent.", suffix=".tmp")
+    try:
+        with os.fdopen(fd, "w") as f:
+            f.write("\n".join([line] + body) + "\n")
+        os.chmod(tmp, p.stat().st_mode & 0o777)
+        os.replace(tmp, p)
+    except BaseException:
+        if os.path.exists(tmp):
+            os.unlink(tmp)
+        raise
     return line
 
 
 # ---------------------------------------------------------------- 02 spec
 
+def fold(s: str) -> str:
+    """Lower case, with curly apostrophes and quotes made straight, so ’ and ' are the same letter."""
+    return s.lower().translate(str.maketrans("’‘“”", "''\"\""))
+
+
+def numbers(low: str) -> set:
+    """The numbers in a text as whole tokens: 1,500 and 1500 are one token, 150 is not inside either."""
+    return {n.replace(",", "") for n in re.findall(r"[0-9]+(?:,[0-9]{3})*(?:\.[0-9]+)?%?", low)}
+
+
 def hard_tokens(text: str) -> list:
-    low = text.lower()
-    toks = [("number", n) for n in re.findall(r"\d[\d,]*(?:\.\d+)?%?", low)]
-    for pair in re.findall(r'"([^"]+)"|`([^`]+)`', text):
-        toks += [("quoted", q.lower()) for q in pair if q]
+    low = fold(text)
+    toks = [("number", n) for n in sorted(numbers(low))]
+    toks += [("quoted", q) for rx in QUOTES for q in re.findall(rx, low)]
     for name, words in WORD_CLASSES:
         if has_word(low, words):
             toks.append((name, name))
@@ -129,11 +182,14 @@ def has_word(low: str, words: set) -> bool:
     return any(re.search(r"\b" + re.escape(w) + r"\b", low) for w in words)
 
 
-def carried(token: tuple, haystack: str) -> bool:
+def carried(token: tuple, criterion: str) -> bool:
+    """True when this one criterion keeps the token: a number as a whole number, a quoted text as whole words."""
     kind, val = token
-    low = haystack.lower()
-    if kind in ("number", "quoted"):
-        return val.replace(",", "") in low.replace(",", "")
+    low = fold(criterion)
+    if kind == "number":
+        return val in numbers(low)
+    if kind == "quoted":
+        return re.search(r"(?<!\w)" + re.escape(val) + r"(?!\w)", low) is not None
     return has_word(low, dict(WORD_CLASSES)[val])
 
 
@@ -160,11 +216,12 @@ def chain_check(run: Path) -> list:
 
 def check_spec(intent: str, spec: str) -> list:
     bag: list = []
+    duplicate_intent(intent, bag)
     crits = spec_lines(spec)
     for iid, text in intent_lines(intent).items():
-        covering = " ".join(t for _, cite, t in crits if re.search(r"\b" + iid + r"\b", cite))
+        covering = [t for _, cite, t in crits if re.search(r"\b" + iid + r"\b", cite)]
         for tok in (hard_tokens(text) if covering else []):  # uncovered is chain-check's finding
-            if not carried(tok, covering):
+            if not any(carried(tok, t) for t in covering):
                 what = f"{tok[0]} {tok[1]!r}" if tok[0] in ("number", "quoted") else f"a word of the '{tok[0]}' kind"
                 out("FAIL", "TG3", f"{iid} has {what}, but no A line citing {iid} keeps it", bag)
     return bag
@@ -172,32 +229,56 @@ def check_spec(intent: str, spec: str) -> list:
 
 # ---------------------------------------------------------------- 06 result
 
-def result_rows(result: str) -> dict:
-    rows = {}
+def result_rows(result: str) -> tuple:
+    """({I: (outcome, evidence)}, [I that has more than one row])"""
+    rows, twice = {}, []
     for ln in section(result, "Asked versus delivered"):
         cells = [c.strip() for c in ln.strip().strip("|").split("|")]
         if len(cells) >= 3 and re.fullmatch(r"I\d+", cells[0]):
-            rows[cells[0]] = (cells[1].lower(), cells[2])
-    return rows
+            if cells[0] in rows and cells[0] not in twice:
+                twice.append(cells[0])
+            rows.setdefault(cells[0], (cells[1].lower(), cells[2]))
+    return rows, twice
+
+
+def inside(path: Path, root: Path) -> bool:
+    try:
+        path.relative_to(root)
+    except ValueError:
+        return False
+    return True
 
 
 def resolve_pointer(ptr: str, root: Path) -> str:
-    """'' when the pointer resolves, otherwise why not. file[:N[-M]], file#Heading, test:<name> or a URL."""
+    """'' when the pointer resolves, otherwise why not. file[:N[-M]], file#Heading, test:<name> or a URL.
+    Evidence must live under root: no absolute path, no ../, no symlink that leaves it."""
+    root = root.resolve()
     if re.match(r"^(https?://|url:)", ptr):
         return "unresolved offline"
     if ptr.startswith("test:"):
         name = ptr[5:].strip()
-        hit = any(name in f.read_text(errors="ignore") for f in root.rglob("*") if f.is_file() and ".test." in f.name)
+        hit = any(name in f.read_text(errors="ignore") for f in root.rglob("*")
+                  if ".test." in f.name and f.is_file() and inside(f.resolve(), root))
         return "" if hit else f"no test named {name!r} under {root}"
     m = re.match(r"^([^:#]+)(?::(\d+)(?:-(\d+))?|#(.+))?$", ptr)
     if not m:
         return f"cannot read pointer {ptr!r}"
-    f = root / m.group(1)
+    if Path(m.group(1)).is_absolute():
+        return f"{m.group(1)} is an absolute path: evidence is named relative to {root}"
+    f = (root / m.group(1)).resolve()
+    if not inside(f, root):
+        return f"{m.group(1)} is outside {root}"
     if not f.is_file():
         return f"{m.group(1)} does not exist under {root}"
     body = f.read_text(errors="ignore").splitlines()
-    if m.group(2) and int(m.group(3) or m.group(2)) > len(body):
-        return f"{m.group(1)} has {len(body)} lines, pointer says {m.group(3) or m.group(2)}"
+    if m.group(2):
+        start, end = int(m.group(2)), int(m.group(3) or m.group(2))
+        if start < 1:
+            return f"line numbers start at 1, pointer says {start}"
+        if end < start:
+            return f"the range {start}-{end} ends before it starts"
+        if end > len(body):
+            return f"{m.group(1)} has {len(body)} lines, pointer says {end}"
     if m.group(4) and not any(re.match(r"^#+\s*" + re.escape(m.group(4).strip()) + r"\s*$", ln, re.I) for ln in body):
         return f"no heading {m.group(4)!r} in {m.group(1)}"
     return ""
@@ -205,7 +286,11 @@ def resolve_pointer(ptr: str, root: Path) -> str:
 
 def check_result(intent: str, result: str, root: Path) -> list:
     bag: list = []
-    lines, rows = intent_lines(intent), result_rows(result)
+    duplicate_intent(intent, bag)
+    lines = intent_lines(intent)
+    rows, twice = result_rows(result)
+    for iid in twice:
+        out("FAIL", "TG4", f"{iid} has two rows in 'Asked versus delivered': one row per intent line", bag)
     for iid in lines:
         if iid not in rows:
             out("FAIL", "TG4", f"{iid} has no row in 'Asked versus delivered'", bag)
@@ -282,8 +367,9 @@ def check_transcript(text: str, known: list = (), complete: bool = False) -> lis
             for fact in known:
                 if fact.strip() and fact.strip().lower() in q.split("Recommended:")[0].lower():
                     out("FAIL", "TR3", f"round {n} Q{i} asks about '{fact.strip()}', which the files already answer", bag)
-    if complete and (not agent or "shared understanding" not in agent[-1].lower()):
-        out("FAIL", "TR4", "the last agent message does not ask for confirmation of a shared understanding", bag)
+    last = agent[-1] if agent else ""
+    if complete and not (re.search(r"\bI\d+\b", last) and re.search(r"shared understanding[^?]*\?", last, re.I)):
+        out("FAIL", "TR4", "the last agent message does not read the I lines back and ask whether it is a shared understanding", bag)
     return bag
 
 
@@ -323,6 +409,8 @@ def main(argv: list = None) -> int:
             return 0
         known = a.known.read_text().splitlines() if a.known else []
         return emit(check_transcript(a.transcript.read_text(), known, a.complete))
+    except UnicodeDecodeError as e:
+        print(f"FAIL IO cannot read {e.object[max(e.start - 10, 0):e.start]!r}...: not valid UTF-8 ({e.reason}) at byte {e.start}")
     except ValueError as e:
         print(f"FAIL TG2 {e}")
     except OSError as e:
