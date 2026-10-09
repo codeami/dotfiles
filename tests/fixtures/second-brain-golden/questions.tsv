@@ -1,0 +1,5 @@
+id	category	question	evidence	store
+s1	single	crunchy red orchard fruit	apple	real
+s2	single	soft yellow ripening	cherry	real
+n1	no-answer	quantum chromodynamics lattice		real
+c1	contradiction	banana ripening time	banana	fixture:contradiction

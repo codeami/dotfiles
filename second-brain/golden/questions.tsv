@@ -1,0 +1,22 @@
+id	category	question	evidence	store
+q01	single	Why must the always-loaded global memory file stay tiny?	global-memory-is-minimal	real
+q02	single	How does AXI compare with MCP on token cost and latency?	agent-ergonomics	real
+q03	single	What does calm mode hide, and what does it leave visible?	calm-mode	real
+q04	single	What problem do manual git worktrees create and what fixes it?	worktree-pooling	real
+q05	single	How are autonomous overnight loops kept safe?	long-running-loops	real
+q06	single	Why gate production secrets behind a vault approval flow?	secret-management-vault	real
+q07	single	How should a bug fix start?	reproduce-bugs-end-to-end	real
+q08	single	Is a skill's popularity a sign it is good?	popular-skills-are-not-good-skills	real
+q09	two-source	Which notes say a skill and an ICM are both frozen conversations built from real dialogue?	dialogue-freezes-into-skills,icm-every-workflow-comes-from-dialogue	real
+q10	two-source	How do Backpass and Substrate differ in how closely they look at a conversation?	backpass-vs-substrate,substrate-dialogue-to-graph	real
+q11	two-source	What goes in the entry file of a folder workspace and which three file kinds does it need?	icm-routing-table-is-the-core-pattern,icm-map-rooms-tools	real
+q12	two-source	How does a project memory file grow while the global memory stays small?	project-memory-is-collective-learning,global-memory-is-minimal	real
+q13	two-source	Who decides what is important in a context layer, and how many brains should I build?	structure-decides-what-matters,mini-brains-not-one-brain	real
+q14	paraphrase	Which setup lets me stop watching every step the agent takes?	calm-mode	real
+q15	paraphrase	Why not read each code change myself before it merges?	validate-dont-review	real
+q16	paraphrase	Models guess building is slow and pick cheap fixes; what do I do about it?	models-underestimate-their-own-speed	real
+q17	paraphrase	How do I stop the agent adding scope nobody asked for?	correct-overengineering	real
+q18	no-answer	Which vector database does the store use for embeddings?		real
+q19	no-answer	What is the monthly price of a Claude Max subscription?		real
+q20	no-answer	How do I configure Kubernetes pod autoscaling?		real
+q21	contradiction	What cooldown do overnight loops wait between iterations, and which source superseded which?	long-running-loops	fixture:contradiction
