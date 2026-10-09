@@ -1,0 +1,334 @@
+#!/usr/bin/env python3
+"""taste-check: the no-model checks behind the factory chain's intent gates (areas/factory).
+
+    taste-check intent RUN_DIR      TG1 verbatim I lines, TG2 sealed approval    (01-words.txt, 01-intent.md)
+    taste-check seal RUN_DIR --who W --source S [--today D]   write the approved: line (only on his word)
+    taste-check spec RUN_DIR        chain-check coverage, then TG3 hard words carried   (02-spec.md)
+    taste-check result RUN_DIR [--root DIR]   TG4 one row per I, TG5 evidence resolves, TG6 Unrequested
+    taste-check ask ASK.txt         which of 12 detectable questions the ask already answers
+    taste-check transcript T.md [--known F.txt] [--complete]   TR1-TR5 shape of an intent interview
+
+Every output line is `FAIL id ...` (a problem) or `WARN id ...` (a candidate for judgement).
+Exit 1 when any FAIL is printed; a WARN never changes the exit status. Standard library, Python 3.9+.
+"""
+from __future__ import annotations
+
+import argparse
+import datetime
+import hashlib
+import re
+import subprocess
+import sys
+from pathlib import Path
+
+CHAIN_CHECK = Path(__file__).resolve().parent / "chain-check"
+OUTCOMES = {"delivered", "changed", "not-delivered", "n/a"}
+NEG = {"not", "no", "never", "without", "don't", "doesn't", "cannot", "can't", "won't", "refuse", "reject"}
+ONLY = {"only", "exactly", "solely"}
+BOUND = {"under", "over", "below", "above", "at most", "at least", "up to", "no more than", "less than", "more than"}
+WORD_CLASSES = (("negation", NEG), ("only", ONLY), ("bound", BOUND))
+APPROVED = re.compile(r"^approved:\s*(\d{4}-\d{2}-\d{2})(?:\s+(\S+)\s+([0-9a-f]{12})(?:\s+via\s+(.+))?)?\s*$")
+
+
+def norm(s: str) -> str:
+    return re.sub(r"\s+", " ", s.strip())
+
+
+def out(kind: str, cid: str, msg: str, bag: list) -> None:
+    bag.append((kind, cid, msg))
+
+
+def emit(bag: list) -> int:
+    for kind, cid, msg in bag:
+        print(f"{kind} {cid} {msg}")
+    fails = sum(1 for k, _, _ in bag if k == "FAIL")
+    print(f"{'FAIL' if fails else 'ok'}: {fails} problem(s), {len(bag) - fails} for judgement")
+    return 1 if fails else 0
+
+
+def section(text: str, heading: str) -> list:
+    got, on = [], False
+    for ln in text.splitlines():
+        if ln.startswith("## "):
+            on = ln[3:].strip().lower().startswith(heading.lower())
+        elif on:
+            got.append(ln)
+    return got
+
+
+def intent_lines(text: str) -> dict:
+    found = {}
+    for ln in section(text, "Captain"):
+        m = re.match(r"^(I\d+):\s*(.+)$", ln.strip())
+        if m:
+            found[m.group(1)] = norm(m.group(2))
+    return found
+
+
+def words_hash(lines: dict) -> str:
+    block = "\n".join(f"{k}: {v}" for k, v in sorted(lines.items(), key=lambda kv: int(kv[0][1:])))
+    return hashlib.sha256(block.encode()).hexdigest()[:12]
+
+
+def blocking_questions(intent: str) -> list:
+    return [ln.strip() for ln in section(intent, "Open questions") if ln.strip().lstrip("-* ").lower().startswith("blocking:")]
+
+
+# ---------------------------------------------------------------- 01 intent
+
+def check_intent(words: str, intent: str) -> list:
+    bag: list = []
+    lines = intent_lines(intent)
+    if not lines:
+        out("FAIL", "TG1", "01-intent.md has no I lines under \"Captain's words\"", bag)
+    said = norm(words).lower()
+    for iid, text in lines.items():
+        if not text.lower().startswith("context:") and norm(text).lower().rstrip(".") not in said:
+            out("FAIL", "TG1", f"{iid} is not something the captain said verbatim: \"{text}\"", bag)
+    head = next((ln for ln in intent.splitlines()[:5] if ln.startswith("approved:")), None)
+    if head is None:
+        out("FAIL", "TG2", "no 'approved:' line: the intent is not approved, 02 must not start", bag)
+        return bag
+    for q in blocking_questions(intent):
+        out("FAIL", "TG2", f"approved while a blocking question is open: {q}", bag)
+    m = APPROVED.match(head.strip())
+    if not m:
+        out("FAIL", "TG2", f"approved line is malformed: {head!r}", bag)
+    elif m.group(3) is None:
+        out("WARN", "TG2", "approved line has a date only: add who and a hash with `seal`, so a later edit shows", bag)
+    elif m.group(3) != words_hash(lines):
+        out("FAIL", "TG2", f"the I lines changed after approval (hash {m.group(3)} != {words_hash(lines)})", bag)
+    return bag
+
+
+def seal(run: Path, who: str, source: str, today: str) -> str:
+    p = run / "01-intent.md"
+    text = p.read_text()
+    if blocking_questions(text):
+        raise ValueError("refusing to seal: a blocking question is still open: " + blocking_questions(text)[0])
+    body = [ln for ln in text.splitlines() if not ln.startswith("approved:")]
+    line = f"approved: {today} {who} {words_hash(intent_lines(text))} via {source}"
+    p.write_text("\n".join([line] + body) + "\n")
+    return line
+
+
+# ---------------------------------------------------------------- 02 spec
+
+def hard_tokens(text: str) -> list:
+    low = text.lower()
+    toks = [("number", n) for n in re.findall(r"\d[\d,]*(?:\.\d+)?%?", low)]
+    for pair in re.findall(r'"([^"]+)"|`([^`]+)`', text):
+        toks += [("quoted", q.lower()) for q in pair if q]
+    for name, words in WORD_CLASSES:
+        if has_word(low, words):
+            toks.append((name, name))
+    return toks
+
+
+def has_word(low: str, words: set) -> bool:
+    return any(re.search(r"\b" + re.escape(w) + r"\b", low) for w in words)
+
+
+def carried(token: tuple, haystack: str) -> bool:
+    kind, val = token
+    low = haystack.lower()
+    if kind in ("number", "quoted"):
+        return val.replace(",", "") in low.replace(",", "")
+    return has_word(low, dict(WORD_CLASSES)[val])
+
+
+def spec_lines(spec: str) -> list:
+    return [m.groups() for m in (re.match(r"^(A\d+)\s*\(([^)]*)\):\s*(.*)$", ln) for ln in spec.splitlines()) if m]
+
+
+def chain_check(run: Path) -> list:
+    """Coverage (every I is covered, out of scope or open; every A cites an I) is chain-check's job."""
+    bag: list = []
+    if not CHAIN_CHECK.is_file():
+        out("FAIL", "CHAIN", f"{CHAIN_CHECK} is missing: coverage cannot be checked", bag)
+        return bag
+    done = subprocess.run([str(CHAIN_CHECK), str(run)], capture_output=True, text=True)
+    for ln in done.stdout.splitlines():
+        if ln.startswith("FAIL"):
+            out("FAIL", "CHAIN", ln[4:].strip(), bag)
+        elif ln.startswith("ask:"):
+            out("WARN", "CHAIN", "ask: " + ln[4:].strip(), bag)
+    if done.returncode and not any(k == "FAIL" for k, _, _ in bag):
+        out("FAIL", "CHAIN", f"chain-check exited {done.returncode}: {done.stderr.strip()}", bag)
+    return bag
+
+
+def check_spec(intent: str, spec: str) -> list:
+    bag: list = []
+    crits = spec_lines(spec)
+    for iid, text in intent_lines(intent).items():
+        covering = " ".join(t for _, cite, t in crits if re.search(r"\b" + iid + r"\b", cite))
+        for tok in (hard_tokens(text) if covering else []):  # uncovered is chain-check's finding
+            if not carried(tok, covering):
+                what = f"{tok[0]} {tok[1]!r}" if tok[0] in ("number", "quoted") else f"a word of the '{tok[0]}' kind"
+                out("FAIL", "TG3", f"{iid} has {what}, but no A line citing {iid} keeps it", bag)
+    return bag
+
+
+# ---------------------------------------------------------------- 06 result
+
+def result_rows(result: str) -> dict:
+    rows = {}
+    for ln in section(result, "Asked versus delivered"):
+        cells = [c.strip() for c in ln.strip().strip("|").split("|")]
+        if len(cells) >= 3 and re.fullmatch(r"I\d+", cells[0]):
+            rows[cells[0]] = (cells[1].lower(), cells[2])
+    return rows
+
+
+def resolve_pointer(ptr: str, root: Path) -> str:
+    """'' when the pointer resolves, otherwise why not. file[:N[-M]], file#Heading, test:<name> or a URL."""
+    if re.match(r"^(https?://|url:)", ptr):
+        return "unresolved offline"
+    if ptr.startswith("test:"):
+        name = ptr[5:].strip()
+        hit = any(name in f.read_text(errors="ignore") for f in root.rglob("*") if f.is_file() and ".test." in f.name)
+        return "" if hit else f"no test named {name!r} under {root}"
+    m = re.match(r"^([^:#]+)(?::(\d+)(?:-(\d+))?|#(.+))?$", ptr)
+    if not m:
+        return f"cannot read pointer {ptr!r}"
+    f = root / m.group(1)
+    if not f.is_file():
+        return f"{m.group(1)} does not exist under {root}"
+    body = f.read_text(errors="ignore").splitlines()
+    if m.group(2) and int(m.group(3) or m.group(2)) > len(body):
+        return f"{m.group(1)} has {len(body)} lines, pointer says {m.group(3) or m.group(2)}"
+    if m.group(4) and not any(re.match(r"^#+\s*" + re.escape(m.group(4).strip()) + r"\s*$", ln, re.I) for ln in body):
+        return f"no heading {m.group(4)!r} in {m.group(1)}"
+    return ""
+
+
+def check_result(intent: str, result: str, root: Path) -> list:
+    bag: list = []
+    lines, rows = intent_lines(intent), result_rows(result)
+    for iid in lines:
+        if iid not in rows:
+            out("FAIL", "TG4", f"{iid} has no row in 'Asked versus delivered'", bag)
+    for iid in rows:
+        if iid not in lines:
+            out("FAIL", "TG4", f"row {iid} names an intent line that does not exist", bag)
+    for iid, (outcome, ptr) in rows.items():
+        if outcome not in OUTCOMES:
+            out("FAIL", "TG4", f"{iid} outcome {outcome!r} is not one of {sorted(OUTCOMES)}", bag)
+        elif outcome in ("delivered", "changed"):
+            if ptr in ("", "-"):
+                out("FAIL", "TG5", f"{iid} is {outcome} but cites no evidence", bag)
+                continue
+            why = resolve_pointer(ptr, root)
+            if why == "unresolved offline":
+                out("WARN", "TG5", f"{iid} evidence {ptr} cannot be checked offline", bag)
+            elif why:
+                out("FAIL", "TG5", f"{iid} evidence does not resolve: {why}", bag)
+    if not any(ln.strip() for ln in section(result, "Unrequested")):
+        out("FAIL", "TG6", "no '## Unrequested' section: write 'none' if nothing was added", bag)
+    return bag
+
+
+# ---------------------------------------------------------------- the shape of an interview
+
+# One detector per question in the set that a script can see in an ask. A hit means "the ask already
+# answers this question", so the interview need not spend a question on it. Collision, undo and
+# read-back cannot be seen in an ask: they are always judgement.
+SLOTS = {
+    "q1": ("purpose", r"\bso that\b|\bin order to\b|\bbecause\b|,? so (?:they|we|i|you) (?:can|could|will|don't)\b"),
+    "q2": ("audience", r"\b(?:readers|users|visitors|staff|learners|customers|engineers|developers|students|people|team)\b"),
+    "q3": ("one-job", r"\bjust a\b|\bone thing\b|\bnothing else\b|\bonly one\b"),
+    "q4": ("done", r"\bdone when\b|\bworks when\b|\bsuccess (?:is|means)\b|\bshould be able\b|\b(?:under|within) \d"),
+    "q5": ("example", r"\bfor example\b|\be\.g\.|\bexample:|\bsuch as\b|\bex:|\bthe (?:right|wrong) (?:tone|one|way)\b"),
+    "q6": ("flow", r"\bfirst\b.*\bthen\b|\bstep 1\b|\bafter that\b|\bstart to finish\b"),
+    "q7": ("non-goal", r"\bnot\b|\bnever\b|\bno (?:new|more|other|paid)\b|\bwithout\b|\bout of scope\b|\bdon't\b"),
+    "q8": ("constraint", r"\bbudget\b|\bfree tiers?\b|\bdeadline\b|\boffline\b|\bprivacy\b|\bat (?:least|most) \d|\b\d+ ?(?:ms|seconds?|kb|mb|minutes?|days)\b|\bon my [a-z]+\b"),
+    "q10": ("growth", r"\blater\b|\bnext (?:month|version|phase)\b|\bv2\b|\bfuture\b"),
+    "q11": ("term", r"\bmeans\b|\bi\.e\.|\bis defined as\b|\bcalled\b"),
+    "q12": ("case", r"\b(?:if|when)\b[^.]{3,80}\b(?:then|should|must|will)\b"),
+    "q14": ("assume", r"\bassum(?:e|ing|ption)\b|\bverify\b|\bnot sure\b|\bunsure\b|\bprobably\b"),
+}
+SET_LABELS = {label for label, _ in SLOTS.values()} | {"collision", "undo", "readback"}
+
+
+def check_ask(text: str) -> dict:
+    """{slot: 1 or 0}: 1 when the ask already answers that question (as far as a pattern can tell)."""
+    return {k: 1 if re.search(rx, text, re.I | re.S) else 0 for k, (_, rx) in SLOTS.items()}
+
+
+def turns(text: str) -> list:
+    parts = re.split(r"^(AGENT|CAPTAIN):[ \t]*", text, flags=re.M)
+    return list(zip(parts[1::2], parts[2::2]))
+
+
+def check_transcript(text: str, known: list = (), complete: bool = False) -> list:
+    """The parts of an interview a script can see: rounds, recommendations, facts asked, the read-back.
+    Whether the questions sit on real forks is judgement and is not checked here."""
+    bag: list = []
+    agent = [body for role, body in turns(text) if role == "AGENT"]
+    rounds = [rd for body in agent for rd in re.split(r"^Round \d+[ \t]*$", body, flags=re.M)[1:]]
+    if not rounds:
+        out("FAIL", "TR1", "no 'Round <n>' header: the agent did not ask in rounds", bag)
+    for n, rd in enumerate(rounds, 1):
+        qs = re.split(r"^Q\d+\b", rd, flags=re.M)[1:]
+        if len(qs) > 5:
+            out("FAIL", "TR2", f"round {n} asks {len(qs)} questions; the cap is 5", bag)
+        for i, q in enumerate(qs, 1):
+            tag = re.match(r"\s*\[([\w-]+)\]", q)
+            if not tag or tag.group(1) not in SET_LABELS:
+                out("FAIL", "TR5", f"round {n} Q{i} carries no tag from the question set, e.g. [done]", bag)
+            if "Recommended:" not in q:
+                out("FAIL", "TR1", f"round {n} Q{i} has no 'Recommended:' line", bag)
+            for fact in known:
+                if fact.strip() and fact.strip().lower() in q.split("Recommended:")[0].lower():
+                    out("FAIL", "TR3", f"round {n} Q{i} asks about '{fact.strip()}', which the files already answer", bag)
+    if complete and (not agent or "shared understanding" not in agent[-1].lower()):
+        out("FAIL", "TR4", "the last agent message does not ask for confirmation of a shared understanding", bag)
+    return bag
+
+
+# ---------------------------------------------------------------- command line
+
+def main(argv: list = None) -> int:
+    ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
+    sub = ap.add_subparsers(dest="cmd", required=True)
+    for name in ("intent", "spec", "result", "seal"):
+        sub.add_parser(name).add_argument("run", type=Path)
+    sub.choices["result"].add_argument("--root", type=Path)
+    sub.choices["seal"].add_argument("--who", required=True)
+    sub.choices["seal"].add_argument("--source", required=True)
+    sub.choices["seal"].add_argument("--today", default=datetime.date.today().isoformat())
+    t = sub.add_parser("transcript")
+    t.add_argument("transcript", type=Path)
+    t.add_argument("--known", type=Path)
+    t.add_argument("--complete", action="store_true")
+    sub.add_parser("ask").add_argument("ask", type=Path)
+    a = ap.parse_args(argv)
+    try:
+        if a.cmd == "intent":
+            return emit(check_intent((a.run / "01-words.txt").read_text(), (a.run / "01-intent.md").read_text()))
+        if a.cmd == "spec":
+            intent, spec = (a.run / "01-intent.md").read_text(), (a.run / "02-spec.md").read_text()
+            return emit(chain_check(a.run) + check_spec(intent, spec))
+        if a.cmd == "result":
+            return emit(check_result((a.run / "01-intent.md").read_text(), (a.run / "06-result.md").read_text(), a.root or a.run))
+        if a.cmd == "seal":
+            print(seal(a.run, a.who, a.source, a.today))
+            return 0
+        if a.cmd == "ask":
+            got = check_ask(a.ask.read_text())
+            print("answered: " + (", ".join(f"{k} {SLOTS[k][0]}" for k, v in got.items() if v) or "none"))
+            print("ask next: " + (", ".join(f"{k} {SLOTS[k][0]}" for k, v in got.items() if not v) or "none"))
+            print(f"coverage: {sum(got.values())} of {len(got)}")
+            return 0
+        known = a.known.read_text().splitlines() if a.known else []
+        return emit(check_transcript(a.transcript.read_text(), known, a.complete))
+    except ValueError as e:
+        print(f"FAIL TG2 {e}")
+    except OSError as e:
+        print(f"FAIL IO cannot read {e.filename}: {e.strerror}")
+    return 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())
