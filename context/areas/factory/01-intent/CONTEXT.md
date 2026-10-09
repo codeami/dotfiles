@@ -12,8 +12,8 @@ One job: write down what was asked, in his words, and nothing else.
 Do NOT load: project code, the backlog, other runs' files.
 
 ## Process
-1. Restate the ask in one sentence. Ask the one question whose answer would change what gets built, with your recommended answer.
-2. Repeat until no open question could change the build. Scouts: restate and proceed.
+1. Restate the ask in one sentence. Ask in rounds of up to five questions, each with your recommended answer, worded so "yes" accepts it.
+2. Repeat rounds until no open question could change the build. Scouts: restate and proceed.
 3. Write `01-intent.md`: "## Captain's words" as `I1..In` (his words, or marked `context:`), then "## Open questions and assumptions".
 
 ## Outputs
