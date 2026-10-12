@@ -2,7 +2,7 @@
 """Baseline retrieval scorer for the second-brain golden questions.
 
 No model, no network. For each question in golden/questions.tsv it ranks the
-nodes by keyword overlap (IDF-weighted; tags, slug and claim count more than
+nodes (hub notes, `type: hub`, are skipped) by keyword overlap (IDF-weighted; tags, slug and claim count more than
 body text), takes the top K, and prints per-category
   Recall@K  - mean share of the expected nodes found in the top K
   Hit@K     - share of questions with at least one expected node in the top K
@@ -52,6 +52,7 @@ def load_node(path):
     tags = re.search(r"^tags:\s*\[(.*?)\]", front, re.M)
     claim = re.search(r"^Claim:\s*(.*)$", body, re.M)
     return {
+        "hub": bool(re.search(r"^type:\s*hub\s*$", front, re.M)),
         "tags": set(terms(tags.group(1).replace(",", " "))) if tags else set(),
         "slug": set(terms(path.stem.replace("-", " "))),
         "claim": set(terms(claim.group(1))) if claim else set(),
@@ -65,6 +66,7 @@ def load_dir(d):
 
 
 def rank(nodes, question):
+    nodes = {slug: n for slug, n in nodes.items() if not n["hub"]}  # hubs are reading orders, not evidence
     q = set(terms(question))
     df = defaultdict(int)
     for n in nodes.values():

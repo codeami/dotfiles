@@ -14,6 +14,7 @@ Every note in nodes/ is:
 
 - Use [[slug]] to link notes. Backlinks are implied.
 - Every note links to at least one other note or a tag.
+- A hub note (`type: hub` in front matter, slug `hub-<topic>`) is a short reading order over its member nodes; it links to each member and to the next hub, and `scripts/golden.py` skips it when ranking.
 - shared/index.md is the single entry point; every note appears there.
 
 ## Naming

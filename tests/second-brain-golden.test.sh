@@ -44,3 +44,8 @@ python3 "$GOLDEN" >/dev/null 2>&1
 after=$(find "$ROOT/second-brain/nodes" -type f -exec shasum {} + | sort)
 [ "$before" = "$after" ] || fail "runner modified nodes"
 pass "runner is read-only on real nodes"
+
+# hub nodes (front matter `type: hub`) are reading orders, not evidence: they must not take ranking slots
+out=$(python3 "$GOLDEN" --nodes "$FIX/hubs/nodes" --questions "$FIX/hubs/questions.tsv" --fixtures "$FIX/fixtures" --k 1 --threshold 1 2>&1 | tr -s ' ')
+assert_contains "$out" "single 1 1.00 1.00 -" "a hub must not outrank the real node"
+pass "hub nodes are skipped when ranking"

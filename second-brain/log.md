@@ -12,3 +12,12 @@ One line per operation. Format and rules: `_config/conventions.md` (Log).
 2026-10-12 | update | shared/index.md | listed the four new nodes
 2026-10-12 | update | nodes/ | added links: entries to 5 nodes so 6 orphans have a backlink (substrate-dialogue-to-graph, icm-every-workflow-comes-from-dialogue, second-brain-is-a-context-layer, planning-with-artifacts, secret-management-vault)
 2026-10-12 | check | nodes/ | scripts/check_links.py after edits: 0 missing links, 7 orphans left unlinked
+2026-10-12 | rule | _config/conventions.md | hub notes: type: hub reading orders, skipped by golden.py ranking
+2026-10-12 | update | scripts/golden.py | skip type: hub nodes when ranking (test first)
+2026-10-12 | add | hub-running-the-crew | new hub; homes agent-agnostic-workflow, browser-automation, herdr-understands-agents, terminal-first-workflow
+2026-10-12 | add | hub-context-and-memory | new hub; homes compaction-is-an-implementation-detail
+2026-10-12 | add | hub-icm-layers | new hub over the icm-* notes
+2026-10-12 | add | hub-skills-and-judgment | new hub over the skill and distilled-self notes
+2026-10-12 | add | hub-working-with-agents | new hub; homes human-in-the-loop, ramble-to-brief
+2026-10-12 | add | hub-tools-and-safety | new hub over tooling and safety notes
+2026-10-12 | update | shared/index.md | listed the six hubs under a hubs heading

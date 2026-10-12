@@ -3,6 +3,14 @@
 Every distilled note is listed here, one line each, grouped by tag. This file is the graph:
 the folders are the graph in the filesystem; this index is the graph made searchable.
 
+## hubs
+- [[hub-running-the-crew]] — a reading order for running the crew day to day.
+- [[hub-context-and-memory]] — a reading order for what agents remember and load.
+- [[hub-icm-layers]] — the ICM notes, big picture to details.
+- [[hub-skills-and-judgment]] — a reading order for skills and distilled judgment.
+- [[hub-working-with-agents]] — a reading order for directing agents well.
+- [[hub-tools-and-safety]] — a reading order for tool choices and guarded secrets.
+
 ## agentic-stack
 - [[icm-layer-ladder]] — context is delivered in five layers; prevention beats compression.
 - [[agent-ergonomics]] — AXI's ten principles beat MCP on tokens and latency.
