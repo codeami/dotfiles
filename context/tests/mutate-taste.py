@@ -106,6 +106,22 @@ MUTATIONS = [
     # 12 header
     ("the header drops the seal caveat", 'detects accidental change, not deliberate edits', 'is a hash'),
     ("a missing file crashes instead of failing cleanly", 'except OSError as e:', 'except ZeroDivisionError as e:'),
+    # 13 third round
+    ("seal follows a symlinked run folder", 'if run.is_symlink():', 'if False:'),
+    ("spec does not re-check the seal", 'tampered(intent, bag)\n    crits', 'crits'),
+    ("result does not re-check the seal", 'tampered(intent, bag)\n    lines', 'lines'),
+    ("an empty I line vanishes from the parse", r'[ \t]*(.*)$", ln) for ln in section(text, "Captain")', r'[ \t]*(\S.*)$", ln) for ln in section(text, "Captain")'),
+    ("TG1 lets an empty I line through", 'for iid in empty_ids(text):', 'for iid in []:'),
+    ("seal seals an empty I line", 'if empty_ids(text):', 'if False:'),
+    ("TG3 drops the sign of a number", r'(?:(?<![\w.])[+-])?', ''),
+    ("TG3 reads the hyphen of a range as a sign", r'(?:(?<![\w.])[+-])?', r'(?:[+-])?'),
+    ("TG5 matches a test name as a substring", 'return re.search(r"\\b(?:it|test|describe)', 'return name in text or re.search(r"\\b(?:it|test|describe)'),
+    ("TG5 accepts the start of a longer test name", ' + re.escape(name) + r"\\1", text)', ' + re.escape(name), text)'),
+    ("TG4 lets a row with extra cells through", 'if len(cells) > 3:', 'if False:'),
+    ("a \\| in a cell splits the row", r're.split(r"(?<!\\)\|"', r're.split(r"\|"'),
+    ("TG5 accepts a hard link to a file outside the root", 'if linked_outside(f, root):', 'if False:'),
+    ("a test: pointer trusts a hard link from outside", 'and not linked_outside(f.resolve(), root))', ')'),
+    ("a hard link inside the root is taken for one that leaves it", 'return st.st_nlink > here', 'return st.st_nlink > 1'),
 ]
 
 

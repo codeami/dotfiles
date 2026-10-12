@@ -69,7 +69,7 @@ def section(text: str, heading: str) -> list:
 
 def intent_pairs(text: str) -> list:
     """[(id, exact text)] in file order. Only the line ending is dropped: the words are compared as written."""
-    return [(m.group(1), m.group(2)) for m in (re.match(r"^(I\d+):[ \t]*(\S.*)$", ln) for ln in section(text, "Captain")) if m]
+    return [(m.group(1), m.group(2)) for m in (re.match(r"^(I\d+):[ \t]*(.*)$", ln) for ln in section(text, "Captain")) if m]
 
 
 def intent_lines(text: str) -> dict:
@@ -83,6 +83,12 @@ def duplicates(ids: list) -> list:
 def duplicate_intent(text: str, bag: list) -> None:
     for iid in duplicates([i for i, _ in intent_pairs(text)]):
         out("FAIL", "TG1", f"{iid} appears twice in \"Captain's words\": one id, one line", bag)
+    for iid in empty_ids(text):
+        out("FAIL", "TG1", f"{iid} is empty: an I line says what the captain asked", bag)
+
+
+def empty_ids(text: str) -> list:
+    return [i for i, t in intent_pairs(text) if not t]
 
 
 def words_hash(lines: dict) -> str:
@@ -95,6 +101,14 @@ def blocking_questions(intent: str) -> list:
 
 
 # ---------------------------------------------------------------- 01 intent
+
+def tampered(intent: str, bag: list) -> None:
+    """TG2 for the stages after 01: a sealed approval whose hash no longer matches the I lines."""
+    head = next((ln for ln in intent.splitlines()[:5] if ln.startswith("approved:")), None)
+    m = APPROVED.match(head.strip()) if head else None
+    if m and m.group(3) and m.group(3) != words_hash(intent_lines(intent)):
+        out("FAIL", "TG2", f"the I lines changed after approval (hash {m.group(3)} != {words_hash(intent_lines(intent))})", bag)
+
 
 def check_intent(words: str, intent: str) -> list:
     bag: list = []
@@ -126,6 +140,8 @@ def check_intent(words: str, intent: str) -> list:
 
 def seal(run: Path, who: str, source: str, today: str) -> str:
     p = run / "01-intent.md"
+    if run.is_symlink():
+        raise ValueError(f"refusing to seal: {run} is a symlink, and the line would be written outside the run folder")
     if p.is_symlink():
         raise ValueError(f"refusing to seal: {p} is a symlink, and the line would be written outside the run folder")
     for name, val in (("who", who), ("source", source)):
@@ -138,6 +154,8 @@ def seal(run: Path, who: str, source: str, today: str) -> str:
     text = p.read_text()
     if blocking_questions(text):
         raise ValueError("refusing to seal: a blocking question is still open: " + blocking_questions(text)[0])
+    if empty_ids(text):
+        raise ValueError(f"refusing to seal: {empty_ids(text)[0]} is empty")
     twice = duplicates([i for i, _ in intent_pairs(text)])
     if twice:
         raise ValueError(f"refusing to seal: {twice[0]} appears twice in \"Captain's words\"")
@@ -164,8 +182,9 @@ def fold(s: str) -> str:
 
 
 def numbers(low: str) -> set:
-    """The numbers in a text as whole tokens: 1,500 and 1500 are one token, 150 is not inside either."""
-    return {n.replace(",", "") for n in re.findall(r"[0-9]+(?:,[0-9]{3})*(?:\.[0-9]+)?%?", low)}
+    """The numbers in a text as whole tokens: 1,500 and 1500 are one token, 150 is not inside either.
+    A sign counts when it stands alone before the number (-5, +5), not in a range (2-4)."""
+    return {n.replace(",", "") for n in re.findall(r"(?:(?<![\w.])[+-])?[0-9]+(?:,[0-9]{3})*(?:\.[0-9]+)?%?", low)}
 
 
 def hard_tokens(text: str) -> list:
@@ -217,6 +236,7 @@ def chain_check(run: Path) -> list:
 def check_spec(intent: str, spec: str) -> list:
     bag: list = []
     duplicate_intent(intent, bag)
+    tampered(intent, bag)
     crits = spec_lines(spec)
     for iid, text in intent_lines(intent).items():
         covering = [t for _, cite, t in crits if re.search(r"\b" + iid + r"\b", cite)]
@@ -230,15 +250,18 @@ def check_spec(intent: str, spec: str) -> list:
 # ---------------------------------------------------------------- 06 result
 
 def result_rows(result: str) -> tuple:
-    """({I: (outcome, evidence)}, [I that has more than one row])"""
-    rows, twice = {}, []
+    """({I: (outcome, evidence)}, [I that has more than one row], [I whose row has more than 3 cells]).
+    A | inside a cell is written \\|."""
+    rows, twice, wide = {}, [], []
     for ln in section(result, "Asked versus delivered"):
-        cells = [c.strip() for c in ln.strip().strip("|").split("|")]
+        cells = [c.strip().replace("\\|", "|") for c in re.split(r"(?<!\\)\|", ln.strip().strip("|"))]
         if len(cells) >= 3 and re.fullmatch(r"I\d+", cells[0]):
+            if len(cells) > 3:
+                wide.append(cells[0])
             if cells[0] in rows and cells[0] not in twice:
                 twice.append(cells[0])
             rows.setdefault(cells[0], (cells[1].lower(), cells[2]))
-    return rows, twice
+    return rows, twice, wide
 
 
 def inside(path: Path, root: Path) -> bool:
@@ -249,6 +272,20 @@ def inside(path: Path, root: Path) -> bool:
     return True
 
 
+def linked_outside(f: Path, root: Path) -> bool:
+    """A file with a hard link that is not under root: resolve() cannot see through a hard link."""
+    st = f.stat()
+    if st.st_nlink < 2:
+        return False
+    here = sum(1 for g in root.rglob("*") if g.is_file() and not g.is_symlink() and (g.stat().st_dev, g.stat().st_ino) == (st.st_dev, st.st_ino))
+    return st.st_nlink > here
+
+
+def names_test(text: str, name: str) -> bool:
+    """The name is the whole string of an it( / test( / describe( call, not a word in a comment or a longer name."""
+    return re.search(r"\b(?:it|test|describe)(?:\.\w+)*\s*\(\s*(['\"`])" + re.escape(name) + r"\1", text) is not None
+
+
 def resolve_pointer(ptr: str, root: Path) -> str:
     """'' when the pointer resolves, otherwise why not. file[:N[-M]], file#Heading, test:<name> or a URL.
     Evidence must live under root: no absolute path, no ../, no symlink that leaves it."""
@@ -257,8 +294,8 @@ def resolve_pointer(ptr: str, root: Path) -> str:
         return "unresolved offline"
     if ptr.startswith("test:"):
         name = ptr[5:].strip()
-        hit = any(name in f.read_text(errors="ignore") for f in root.rglob("*")
-                  if ".test." in f.name and f.is_file() and inside(f.resolve(), root))
+        hit = any(names_test(f.read_text(errors="ignore"), name) for f in root.rglob("*")
+                  if ".test." in f.name and f.is_file() and inside(f.resolve(), root) and not linked_outside(f.resolve(), root))
         return "" if hit else f"no test named {name!r} under {root}"
     m = re.match(r"^([^:#]+)(?::(\d+)(?:-(\d+))?|#(.+))?$", ptr)
     if not m:
@@ -270,6 +307,8 @@ def resolve_pointer(ptr: str, root: Path) -> str:
         return f"{m.group(1)} is outside {root}"
     if not f.is_file():
         return f"{m.group(1)} does not exist under {root}"
+    if linked_outside(f, root):
+        return f"{m.group(1)} is a hard link to a file outside {root}"
     body = f.read_text(errors="ignore").splitlines()
     if m.group(2):
         start, end = int(m.group(2)), int(m.group(3) or m.group(2))
@@ -287,8 +326,11 @@ def resolve_pointer(ptr: str, root: Path) -> str:
 def check_result(intent: str, result: str, root: Path) -> list:
     bag: list = []
     duplicate_intent(intent, bag)
+    tampered(intent, bag)
     lines = intent_lines(intent)
-    rows, twice = result_rows(result)
+    rows, twice, wide = result_rows(result)
+    for iid in wide:
+        out("FAIL", "TG4", f"{iid} row has more than 3 cells: write a literal | in the evidence as \\|", bag)
     for iid in twice:
         out("FAIL", "TG4", f"{iid} has two rows in 'Asked versus delivered': one row per intent line", bag)
     for iid in lines:

@@ -133,7 +133,7 @@ ptr e4 'src/link.md:1'; ln -s "$T/out/secret.md" "$T/e4/root/src/link.md"
 check "a pointer through a symlink out of the root fails TG5" "fails_only TG5 result $T/e4 --root $T/e4/root && says 'outside'"
 ptr e5 'src/header.ts:2'; ln -s ../src/header.ts "$T/e5/root/NOTES-link.md"
 check "a symlink that stays inside the root is fine" "passes result $T/e5 --root $T/e5/root"
-fresh ok e6; rm "$T/e6/root/src/theme.test.ts"; printf "x('keeps the saved light theme when the toggle is flipped')\n" > "$T/out/theme.test.ts"; ln -s "$T/out/theme.test.ts" "$T/e6/root/src/theme.test.ts"
+fresh ok e6; rm "$T/e6/root/src/theme.test.ts"; printf "it('keeps the saved light theme when the toggle is flipped')\n" > "$T/out/theme.test.ts"; ln -s "$T/out/theme.test.ts" "$T/e6/root/src/theme.test.ts"
 check "a test: pointer is not satisfied by a test file that is a symlink out of the root" "fails_only TG5 result $T/e6 --root $T/e6/root && says 'no test named'"
 echo "  -- 8 line pointers"
 ptr l1 'src/header.ts:0'
@@ -240,4 +240,52 @@ check "a question with no I lines read back fails TR4" "fails_only TR4 transcrip
 check "the real read-back still passes" "passes transcript $G $K --complete"
 echo "  -- 12 the header says what the seal is for"
 check "the checker header says the seal detects accidental change, not deliberate edits" "head -25 '$TC' | tr '\n' ' ' | grep -q 'accidental change, not deliberate edits'"
+echo "U9  third round: seal in a symlinked folder, re-checked seal, empty I lines, signed numbers, whole test names, pipes, hard links"
+echo "  -- 1 seal refuses a run folder that is a symlink"
+fresh bad-unsealed r1; ln -s "$T/r1" "$T/r1link"
+check "seal refuses a symlinked run folder and writes nothing" \
+  "run seal $T/r1link --who captain --source chat --today 2026-10-08; [ \$RC -eq 1 ] && says 'symlink' && ! grep -q '^approved:' $T/r1/01-intent.md && [ \$(ls -A $T/r1 | wc -l) -eq \$(ls -A $FX/bad-unsealed | wc -l) ]"
+echo "  -- 2 spec and result re-check the seal"
+fresh ok t1; edit "$T/t1/01-intent.md" 'not a sandbox.' 'not a sandpit.'
+check "an I line edited after sealing fails TG2 in spec" "fails_only TG2 spec $T/t1 && says 'changed after approval'"
+check "an I line edited after sealing fails TG2 in result" "fails_only TG2 result $T/t1 --root $T/t1/root && says 'changed after approval'"
+echo "  -- 3 an empty I line is a failure"
+fresh ok x1; edit "$T/x1/01-intent.md" 'I4: ' 'I6:
+I4: '
+check "an empty I line fails TG1 in intent" "run intent $T/x1; [ \$RC -eq 1 ] && says 'FAIL TG1 I6 is empty'"
+check "an empty I line fails TG1 in spec and result too" "run spec $T/x1; [ \$RC -eq 1 ] && says 'FAIL TG1 I6 is empty'; run result $T/x1 --root $T/x1/root; [ \$RC -eq 1 ] && says 'FAIL TG1 I6 is empty'"
+fresh bad-unsealed x2; edit "$T/x2/01-intent.md" 'I4: ' 'I6:
+I4: '
+check "seal refuses an empty I line and writes nothing" "run seal $T/x2 --who captain --source chat --today 2026-10-08; [ \$RC -eq 1 ] && says 'I6 is empty' && ! grep -q '^approved:' $T/x2/01-intent.md"
+echo "  -- 4 signed numbers are tokens"
+fresh ok g1; edit "$T/g1/01-words.txt" 'under 150 kb' 'under -150 kb'; edit "$T/g1/01-intent.md" 'under 150 kb' 'under -150 kb'; reseal g1
+check "-150 is not carried by 150" "fails_only TG3 spec $T/g1 && says \"number '-150'\""
+fresh ok g2; edit "$T/g2/02-spec.md" 'under 150 kb' 'under -150 kb'
+check "150 is not carried by -150" "fails_only TG3 spec $T/g2 && says \"number '150'\""
+fresh ok g3; edit "$T/g3/01-words.txt" 'under 150 kb' 'under +150 kb'; edit "$T/g3/01-intent.md" 'under 150 kb' 'under +150 kb'; reseal g3
+check "+150 is not carried by 150" "fails_only TG3 spec $T/g3 && says \"number '+150'\""
+fresh ok g4; for f in 01-words.txt 01-intent.md 02-spec.md; do edit "$T/g4/$f" 'under 150 kb' 'under -150 kb'; done; reseal g4
+check "-150 is carried by -150" "passes spec $T/g4"
+fresh ok g5; for f in 01-words.txt 01-intent.md; do edit "$T/g5/$f" 'under 150 kb' 'between 100-150 kb'; done; edit "$T/g5/02-spec.md" 'under 150 kb' 'between 100 and 150 kb'; reseal g5
+check "a hyphen in a range is no sign" "passes spec $T/g5"
+echo "  -- 5 a test: pointer names a whole test"
+TN='keeps the saved light theme when the toggle is flipped'
+fresh ok k1; printf "// we deleted the '%s' test\nit('works', () => {});\n" "$TN" > "$T/k1/root/src/theme.test.ts"
+check "a test name only in a comment does not resolve" "fails_only TG5 result $T/k1 --root $T/k1/root && says 'no test named'"
+fresh ok k2; edit "$T/k2/06-result.md" "test:$TN" 'test:keeps the saved light theme'
+check "the start of a longer test name does not resolve" "fails_only TG5 result $T/k2 --root $T/k2/root && says 'no test named'"
+fresh ok k3; printf 'test.only("%s", () => {});\n' "$TN" > "$T/k3/root/src/theme.test.ts"
+check "a double-quoted test.only name resolves" "passes result $T/k3 --root $T/k3/root"
+echo "  -- 6 a | in a pointer"
+ptr p1 'src/header.ts:2|4'
+check "an unescaped | in the pointer cell fails TG4, not a quiet pass" "fails_only TG4 result $T/p1 --root $T/p1/root && says 'cells'"
+ptr p2 'src/a\|b.md:1'; printf 'one\n' > "$T/p2/root/src/a|b.md"
+check "an escaped \\| is part of the pointer" "passes result $T/p2 --root $T/p2/root"
+echo "  -- 7 a hard link inside the root to a file outside it"
+ptr h1 'src/hard.md:1'; ln "$T/out/secret.md" "$T/h1/root/src/hard.md"
+check "a hard link to a file outside the root fails TG5" "fails_only TG5 result $T/h1 --root $T/h1/root && says 'hard link'"
+ptr h2 'src/header-hard.ts:2'; ln "$T/h2/root/src/header.ts" "$T/h2/root/src/header-hard.ts"
+check "a hard link between two files inside the root is fine" "passes result $T/h2 --root $T/h2/root"
+fresh ok h3; rm "$T/h3/root/src/theme.test.ts"; printf "it('%s', () => {});\n" "$TN" > "$T/out/hard.test.ts"; ln "$T/out/hard.test.ts" "$T/h3/root/src/theme.test.ts"
+check "a test: pointer is not satisfied by a test file hard-linked from outside" "fails_only TG5 result $T/h3 --root $T/h3/root && says 'no test named'"
 echo; echo "passed $pass · failed $fail"; [ $fail -eq 0 ]
