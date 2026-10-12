@@ -1,6 +1,6 @@
 ---
 tags: [context-layer]
-links: [icm-layer-ladder]
+links: [icm-layer-ladder, right-thinking-at-the-right-time]
 source: Jake Van Clief, "Second Brain" talk (04:35)
 ---
 

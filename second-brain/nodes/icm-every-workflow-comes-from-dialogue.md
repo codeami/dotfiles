@@ -1,6 +1,6 @@
 ---
 tags: [agentic-stack, context, icm, memory]
-links: [icm-three-layers-chat-skills-structure, cobrain-saves-during-work-not-at-the-end, hermes-memory-is-two-capped-files]
+links: [icm-three-layers-chat-skills-structure, cobrain-saves-during-work-not-at-the-end, hermes-memory-is-two-capped-files, icm-dialogue-as-trigger-voice-controlled-agent]
 source: Jake Van Clief, "You're Automating The Wrong Layer" (YouTube 956DPSPX4wg, 2026-05-21), 07:00–13:30
 ---
 

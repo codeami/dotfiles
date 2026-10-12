@@ -1,6 +1,6 @@
 ---
 tags: [icm, dialogue, memory, blog]
-links: [icm-every-workflow-comes-from-dialogue, icm-read-draft-check-correct, icm-storage-is-not-active-context]
+links: [icm-every-workflow-comes-from-dialogue, icm-read-draft-check-correct, icm-storage-is-not-active-context, backpass-vs-substrate]
 source: Jake Van Clief, "You're Automating The Wrong Layer" 9:00–10:30, frames 0543 + 0545 (Kay Kumar's tool "Substrate", Univ. of Edinburgh research project, unreleased)
 status: reverse-engineered from two screenshots — inferred, not confirmed by the authors
 ---

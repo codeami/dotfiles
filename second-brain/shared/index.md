@@ -15,6 +15,10 @@ the folders are the graph in the filesystem; this index is the graph made search
 ## memory
 - [[global-memory-is-minimal]] — the always-loaded file must stay tiny.
 - [[project-memory-is-collective-learning]] — correct the agent, store the learning.
+- [[cobrain-start-session-loads-a-unit]] — Cobrain's start_session is a read-only briefing for one unit.
+- [[cobrain-saves-during-work-not-at-the-end]] — Cobrain's small append/patch tools make mid-work saves cheap (when to save: unconfirmed).
+- [[hermes-memory-is-two-capped-files]] — Hermes keeps two capped files, frozen into the prompt at start.
+- [[hermes-scans-memory-for-injection]] — Hermes scans memory entries for injection before saving.
 
 ## method
 - [[start-from-a-pain]] — structure follows a recurring pain, not an upfront taxonomy.

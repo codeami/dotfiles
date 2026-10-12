@@ -1,6 +1,6 @@
 ---
 tags: [workflow]
-links: [first-mate]
+links: [first-mate, design-system-first]
 source: Kun Chen, "Agent Engineering Workflow" (planning with interactive artifacts)
 ---
 

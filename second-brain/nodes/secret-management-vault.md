@@ -1,6 +1,6 @@
 ---
 tags: [workflow]
-links: [correct-overengineering]
+links: [correct-overengineering, declarative-infrastructure]
 source: Kun Chen, "Full Stack App" video (secret management)
 ---
 
