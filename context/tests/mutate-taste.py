@@ -67,7 +67,7 @@ MUTATIONS = [
     ("TG5 accepts a pointer that leaves the root", 'if not inside(f, root):', 'if False:'),
     ("TG5 accepts an absolute pointer", 'if Path(m.group(1)).is_absolute():', 'if False:'),
     ("TG5 does not resolve symlinks in a pointer", 'f = (root / m.group(1)).resolve()', 'f = root / m.group(1)'),
-    ("TG5 trusts a test file that is a symlink out of the root", 'and f.is_file() and inside(f.resolve(), root))', 'and f.is_file())'),
+    ("TG5 trusts a test file that is a symlink out of the root", 'and f.is_file() and inside(f.resolve(), root) and', 'and f.is_file() and'),
     # 2 seal
     ("seal follows a symlinked 01-intent.md", 'if p.is_symlink():', 'if False:'),
     ("seal writes in place instead of by rename", 'os.replace(tmp, p)', 'p.write_text(Path(tmp).read_text()); os.unlink(tmp)'),
