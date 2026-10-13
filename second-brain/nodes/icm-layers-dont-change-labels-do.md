@@ -1,7 +1,7 @@
 ---
 tags: [icm, context, organisation]
 links: [icm-map-rooms-tools, icm-routing-table-is-the-core-pattern]
-source: Clief Notes Foundation 3.2 "Customizing for Your Use Case", 4.5 (raw/jvc-course)
+source: Clief Notes Foundation 3.2 "Customizing for Your Use Case", 4.5
 ---
 
 # ICM: the layers don't change, the labels do

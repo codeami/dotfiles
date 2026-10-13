@@ -1,7 +1,7 @@
 ---
 tags: [icm, context, agentic-stack]
 links: [icm-map-rooms-tools, icm-storage-is-not-active-context, icm-read-draft-check-correct]
-source: Clief Notes Foundation 0.2, 3.3 (mistake 2), 4.4, 4.5 (raw/jvc-course)
+source: Clief Notes Foundation 0.2, 3.3 (mistake 2), 4.4, 4.5
 ---
 
 # ICM: the routing table is the core pattern

@@ -1,7 +1,7 @@
 ---
 tags: [icm, strategy]
 links: [icm-three-layers-chat-skills-structure, icm-separate-the-model-from-the-system]
-source: Clief Notes Foundation 2.4 "The Ladder That Explains Every AI Failure" (raw/jvc-course)
+source: Clief Notes Foundation 2.4 "The Ladder That Explains Every AI Failure"
 ---
 
 # ICM: the value ladder — which layer am I standing on?

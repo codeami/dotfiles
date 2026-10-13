@@ -1,7 +1,7 @@
 ---
 tags: [icm, workflow, backpass]
 links: [icm-routing-table-is-the-core-pattern, icm-value-ladder-which-layer-am-i-on]
-source: Clief Notes Foundation 3.3 "Common Mistakes", 4.1–4.5 (raw/jvc-course)
+source: Clief Notes Foundation 3.3 "Common Mistakes", 4.1–4.5
 ---
 
 # ICM: read → draft → check → correct, one change at a time

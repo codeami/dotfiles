@@ -1,7 +1,7 @@
 ---
 tags: [icm, content-engine, production]
 links: [icm-prompt-has-five-typed-slots, icm-one-folder-one-agent-content-pipeline, icm-map-rooms-tools]
-source: Clief Notes Foundation 2.6 "Video as Code" (raw/jvc-course)
+source: Clief Notes Foundation 2.6 "Video as Code"
 ---
 
 # ICM: the spec is the leverage point, and constraints make output better

@@ -1,7 +1,7 @@
 ---
 tags: [icm, architecture, mcp, cert-prep]
 links: [icm-value-ladder-which-layer-am-i-on, kun-chen-agent-policy, icm-map-rooms-tools]
-source: Clief Notes Foundation 2.5 "OpenClaw: Orchestration and AI", 2.7 "From Nazi Psychology to AI Auditing" (raw/jvc-course); Ethics Engine paper arXiv:2510.11742
+source: Clief Notes Foundation 2.5 "OpenClaw: Orchestration and AI", 2.7 "From Nazi Psychology to AI Auditing"; Ethics Engine paper arXiv:2510.11742
 ---
 
 # ICM: separate the model from the system (60/30/10)

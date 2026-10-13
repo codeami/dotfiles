@@ -1,7 +1,7 @@
 ---
 tags: [icm, context, memory, security]
 links: [icm-routing-table-is-the-core-pattern, hermes-scans-memory-for-injection, cobrain-start-session-loads-a-unit]
-source: Clief Notes Foundation 2.3 "How a 1953 Word Game Explains AI Memory" (raw/jvc-course)
+source: Clief Notes Foundation 2.3 "How a 1953 Word Game Explains AI Memory"
 ---
 
 # ICM: storage is not active context, and context is not authority

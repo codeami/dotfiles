@@ -1,7 +1,7 @@
 ---
 tags: [icm, prompting]
 links: [icm-storage-is-not-active-context, icm-spec-is-the-leverage-point]
-source: Clief Notes Foundation 1.3 "How to Structure Any Prompt", 2.3 (raw/jvc-course)
+source: Clief Notes Foundation 1.3 "How to Structure Any Prompt", 2.3
 ---
 
 # ICM: a prompt has five typed slots; the folder holds the stable ones

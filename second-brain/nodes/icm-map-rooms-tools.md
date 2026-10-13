@@ -1,7 +1,7 @@
 ---
 tags: [icm, context, agentic-stack]
 links: [icm-layer-ladder, icm-routing-table-is-the-core-pattern, icm-layers-dont-change-labels-do]
-source: Jake Van Clief, Clief Notes Foundation 0.2 "The Full Walkthrough" (raw/jvc-course/0.2); paper arXiv:2603.16021 §3
+source: Jake Van Clief, Clief Notes Foundation 0.2 "The Full Walkthrough"; paper arXiv:2603.16021 §3
 ---
 
 # ICM: map, rooms, tools — three workspace roles
