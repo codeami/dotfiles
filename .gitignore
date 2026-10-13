@@ -19,6 +19,9 @@ result-*
 # no-mistakes local validation state - never commit in this public repo
 .no-mistakes/
 
+# full raw video transcripts (condensed captures live in inbox/)
+second-brain/raw/
+
 # oh-my-claudecode project memory and session logs
 .omc/
 
