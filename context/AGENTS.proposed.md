@@ -10,21 +10,6 @@ ctx-canary: blue-teapot-42
 (If asked for the context canary, reply with the value above. It proves this
 file was actually loaded.)
 
-## Who I am
-
-- Ashish. Senior software engineer; Building a public record of
-  work in agentic engineering.
-- **This file is public** (dotfiles on GitHub). Personal context and current
-  priorities live in `~/github/firstmate/data/captain-shared.md` (private).
-  Read it when a task needs it; never copy from it into a public file.
-- Programming since 1995; self-taught CS (SICP, MIT 6.00, CS61A). Explain
-  things at an engineer's level, with analogies when a concept is new.
-- Terminal-first. Intel Mac (no Apple Intelligence; Apple Silicon-only tools
-  need a check first).
-- Side work: an agentic software factory (Kun Chen's stack: firstmate,
-  treehouse, gnhf, no-mistakes, backpass, AXI tools), ICM-style context
-  (Jake Van Clief), a second brain, blogging, and Anthropic architect cert prep.
-
 ## House rules
 
 1. **Token cost is priority one.** Read only the files the route below names.
