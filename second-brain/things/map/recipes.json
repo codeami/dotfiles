@@ -1,0 +1,95 @@
+[
+ {
+  "id": "ready-assistant",
+  "title": "A ready-to-use AI assistant",
+  "problem": "I want an AI assistant that knows my work and helps me every day.",
+  "levels": {
+   "1": {
+    "title": "Use it ready-made",
+    "steps": [
+     {"dot": "rowboat", "tag": "S",
+      "why": "Download the Rowboat desktop app for Mac, Windows or Linux. It has email, notes, meeting notes and background agents. Intel Mac support: unknown.",
+      "cite": "data/pmle-rowboat-scout/report.md section 3; Rowboat README"},
+     {"dot": "ollama", "tag": "S",
+      "why": "Pick a model. Use your own key, or a local model through Ollama or LM Studio.",
+      "cite": "data/stack-scout-v1/report.md 2a; data/pmle-rowboat-scout/report.md section 3 (Ollama provider)"},
+     {"dot": "rowboat", "tag": "S",
+      "why": "Add tools. Rowboat takes any MCP server in Settings and has one-click integrations.",
+      "cite": "data/pmle-rowboat-scout/report.md section 3; https://github.com/rowboatlabs/rowboat"}
+    ]
+   },
+   "2": {
+    "title": "Assemble it from parts",
+    "steps": [
+     {"dot": "obsidian-second-brain", "tag": "M",
+      "slot": "retrieval",
+      "detail": "Type: markdown notes with backlinks, no vector database. Level: text now, images later. Rowboat itself builds its graph from markdown links, not a graph database.",
+      "why": "Keep the notes as plain markdown. This pick ingests URLs, PDFs, audio and screenshots by prompt.",
+      "alternatives": [
+       {"dot": "hkuds-rag-anything", "why": "A real multimodal retrieval engine. Heavier. Local model support: unknown."},
+       {"dot": "decodingai-second-brain-course", "why": "Teaches agentic RAG. Text only. Needs an OpenAI key."}
+      ],
+      "cite": "data/stack-scout-v1/report.md 2a (pick is the scout's judgement); data/pmle-rowboat-scout/report.md section 3"},
+     {"dot": "rowboat", "tag": "M",
+      "slot": "desktop manager",
+      "detail": "Pick: unknown. No report names a desktop manager. Rowboat's desktop app is the nearest part named. The captain defines this slot.",
+      "why": "Slot left open on purpose.",
+      "alternatives": [],
+      "cite": "No report covers this slot"},
+     {"dot": "rowboat", "tag": "M",
+      "slot": "desktop UI",
+      "detail": "Use Rowboat only as the viewer and capture UI, not as the brain.",
+      "why": "A ready viewer and capture UI for the notes.",
+      "alternatives": [
+       {"dot": "obsidian", "why": "Free for all purposes per its terms. Open source: unknown."}
+      ],
+      "cite": "data/stack-scout-v1/report.md 2a (recommendation is the scout's judgement)"},
+     {"dot": "firstmate", "tag": "M",
+      "slot": "agents manager",
+      "detail": "The software-factory idea: one dispatcher, many agents.",
+      "why": "One first mate sends crewmates to disposable worktrees and holds decisions for the captain.",
+      "alternatives": [
+       {"dot": "rowboat", "why": "Built-in background agents on cron, window or once schedules. Runs in the app."},
+       {"dot": "gas-town", "why": "A Mayor over 20 to 30 agents. One list line only. Not checked."}
+      ],
+      "cite": "data/eco-compare-v1/report.md section 1; data/pmle-rowboat-scout/report.md section 3"}
+    ]
+   },
+   "3": {
+    "title": "Build it from scratch",
+    "steps": [
+     {"dot": "rowboat", "tag": "S",
+      "why": "Make a folder of markdown notes. A script asks a model for people and orgs, looks each up in an index file, and writes backlinks. Run it twice: the files must match.",
+      "exam": [{"section": "2", "name": "Collaborating within and across teams to manage data and models", "weight": "~16%"}],
+      "cite": "data/pmle-rowboat-scout/report.md section 4, milestone steps 1 and 3"},
+     {"dot": "rowboat", "tag": "S",
+      "why": "Label 30 pairs as same or different entity. Score merge precision and recall. When unsure, do not merge.",
+      "exam": [{"section": "2.3", "name": "Evaluation and LLM-as-a-judge", "weight": "~16%"},
+               {"section": "6.2", "name": "Evaluating gen AI", "weight": "~13%"}],
+      "cite": "data/pmle-rowboat-scout/report.md section 4, milestone step 2 and table"},
+     {"dot": "bigquery-ml", "tag": "S",
+      "why": "Train a small ranker on exported note or email metadata, to sort what matters.",
+      "exam": [{"section": "1.1", "name": "Architecting low-code AI solutions", "weight": "~13%"}],
+      "cite": "data/pmle-rowboat-scout/report.md section 4, Google Cloud table"},
+     {"dot": "agent-platform-pipelines", "tag": "S",
+      "why": "Turn the training into a tracked, repeatable pipeline job.",
+      "exam": [{"section": "2.3", "name": "Experiments and pipelines", "weight": "~16%"},
+               {"section": "5.1", "name": "Automating and orchestrating ML pipelines", "weight": "~18%"}],
+      "cite": "data/pmle-rowboat-scout/report.md section 4, Google Cloud table"},
+     {"dot": "cloud-run", "tag": "S",
+      "why": "Register the model and serve it behind a small API.",
+      "exam": [{"section": "4.1", "name": "Serving and scaling models", "weight": "~20%"}],
+      "cite": "data/pmle-rowboat-scout/report.md section 4, Google Cloud table"},
+     {"dot": "model-monitoring", "tag": "S",
+      "why": "Watch for drift in the queries and features.",
+      "exam": [{"section": "6.2", "name": "Monitoring AI solutions", "weight": "~13%"}],
+      "cite": "data/pmle-rowboat-scout/report.md section 4, Google Cloud table"},
+     {"dot": "google-pmle-exam-guide", "tag": "M",
+      "why": "The heaviest section is hardware, custom training and tuning. The project does not touch it. Study it apart, with Skills Boost and small custom-training runs.",
+      "exam": [{"section": "3", "name": "Scaling prototypes into ML models", "weight": "~21%"}],
+      "cite": "data/pmle-rowboat-scout/report.md section 4 (the study route is the scout's judgement)"}
+    ]
+   }
+  }
+ }
+]

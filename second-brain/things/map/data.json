@@ -25,6 +25,20 @@
  "nodes": [
   {
    "facts": {
+    "last activity": "unknown",
+    "licence": "unknown",
+    "stars": "unknown"
+   },
+   "id": "agent-platform-pipelines",
+   "kind": "service",
+   "line": "Google Cloud pipelines service, renamed from Vertex AI Pipelines. Named in PMLE sections 2.3 and 5.1.",
+   "name": "Agent Platform Pipelines",
+   "note": "card not written yet",
+   "stub": true,
+   "url": "unknown"
+  },
+  {
+   "facts": {
     "last activity": "pushed 2026-10-13 (GitHub API)",
     "licence": "MIT (GitHub API)",
     "stars": "1773 (GitHub API)"
@@ -223,6 +237,34 @@
   },
   {
    "facts": {
+    "last activity": "unknown",
+    "licence": "unknown",
+    "stars": "unknown"
+   },
+   "id": "bigquery-ml",
+   "kind": "service",
+   "line": "Google Cloud service named in PMLE section 1.1.",
+   "name": "BigQuery ML",
+   "note": "card not written yet",
+   "stub": true,
+   "url": "unknown"
+  },
+  {
+   "facts": {
+    "last activity": "unknown",
+    "licence": "unknown",
+    "stars": "unknown"
+   },
+   "id": "cloud-run",
+   "kind": "service",
+   "line": "Google Cloud serving option named in PMLE section 4.1.",
+   "name": "Cloud Run",
+   "note": "card not written yet",
+   "stub": true,
+   "url": "unknown"
+  },
+  {
+   "facts": {
     "last activity": "2026-10-12",
     "licence": "NOASSERTION",
     "stars": "45"
@@ -248,6 +290,20 @@
    "note": "card not written yet",
    "stub": true,
    "url": "https://context-awesome.com"
+  },
+  {
+   "facts": {
+    "last activity": "2026-04-06",
+    "licence": "MIT",
+    "stars": "3114"
+   },
+   "id": "decodingai-second-brain-course",
+   "kind": "list",
+   "line": "Six-module course on agentic RAG over a Notion second brain. Text only. Needs an OpenAI key.",
+   "name": "decodingai-magazine/second-brain-ai-assistant-course",
+   "note": "card not written yet",
+   "stub": true,
+   "url": "https://github.com/decodingai-magazine/second-brain-ai-assistant-course"
   },
   {
    "facts": {
@@ -343,6 +399,62 @@
   },
   {
    "facts": {
+    "last activity": "unknown",
+    "licence": "unknown",
+    "stars": "unknown"
+   },
+   "id": "firstmate",
+   "kind": "tool",
+   "line": "Dispatcher: one first mate, crewmates in tmux or Herdr tabs, task modes no-mistakes, direct-PR and local-only.",
+   "name": "firstmate",
+   "note": "card not written yet",
+   "stub": true,
+   "url": "unknown"
+  },
+  {
+   "facts": {
+    "last activity": "unknown",
+    "licence": "unknown",
+    "stars": "unknown"
+   },
+   "id": "gas-town",
+   "kind": "tool",
+   "line": "Agent factory with a Mayor over 20 to 30 agents. Known only from a one-line list entry.",
+   "name": "Gas Town",
+   "note": "card not written yet",
+   "stub": true,
+   "url": "unknown"
+  },
+  {
+   "facts": {
+    "last activity": "unknown",
+    "licence": "unknown",
+    "stars": "unknown"
+   },
+   "id": "google-pmle-exam-guide",
+   "kind": "list",
+   "line": "Official exam guide as of 2026-06-01. Six sections with stated weights of about 13, 16, 21, 20, 18 and 13 percent.",
+   "name": "Google PMLE exam guide",
+   "note": "card not written yet",
+   "stub": true,
+   "url": "https://services.google.com/fh/files/misc/professional_machine_learning_engineer_exam_guide_english_new.pdf"
+  },
+  {
+   "facts": {
+    "last activity": "2026-10-12",
+    "licence": "MIT",
+    "stars": "23530"
+   },
+   "id": "hkuds-rag-anything",
+   "kind": "tool",
+   "line": "Python multimodal RAG for PDFs, Office files, images, tables and equations. Needs an LLM and a vision model. Local model support not checked.",
+   "name": "HKUDS/RAG-Anything",
+   "note": "card not written yet",
+   "stub": true,
+   "url": "https://github.com/HKUDS/RAG-Anything"
+  },
+  {
+   "facts": {
     "last activity": "2026-08-05",
     "licence": "MIT",
     "stars": "97"
@@ -354,6 +466,62 @@
    "note": "card not written yet",
    "stub": true,
    "url": "https://github.com/hujinghaoabcd/StarHub"
+  },
+  {
+   "facts": {
+    "last activity": "unknown",
+    "licence": "unknown",
+    "stars": "unknown"
+   },
+   "id": "model-monitoring",
+   "kind": "service",
+   "line": "Google Cloud monitoring for skew and drift. Named in PMLE section 6.2.",
+   "name": "Model Monitoring",
+   "note": "card not written yet",
+   "stub": true,
+   "url": "unknown"
+  },
+  {
+   "facts": {
+    "last activity": "unknown",
+    "licence": "unknown",
+    "stars": "unknown"
+   },
+   "id": "obsidian",
+   "kind": "app",
+   "line": "Notes app on plain markdown files. Its terms say free for all purposes. Whether it is open source: unknown.",
+   "name": "Obsidian",
+   "note": "card not written yet",
+   "stub": true,
+   "url": "https://obsidian.md"
+  },
+  {
+   "facts": {
+    "last activity": "2026-10-10",
+    "licence": "MIT",
+    "stars": "4735"
+   },
+   "id": "obsidian-second-brain",
+   "kind": "tool",
+   "line": "A skill for Obsidian vaults. It ingests URLs, PDFs, audio and screenshots into vault pages by prompt, with no vector database. Some commands call outside services.",
+   "name": "eugeniughelbur/obsidian-second-brain",
+   "note": "card not written yet",
+   "stub": true,
+   "url": "https://github.com/eugeniughelbur/obsidian-second-brain"
+  },
+  {
+   "facts": {
+    "last activity": "unknown",
+    "licence": "unknown",
+    "stars": "unknown"
+   },
+   "id": "ollama",
+   "kind": "tool",
+   "line": "Runs local models. Rowboat lists an Ollama provider in its package.json and README. Not checked further.",
+   "name": "Ollama",
+   "note": "card not written yet",
+   "stub": true,
+   "url": "unknown"
   },
   {
    "facts": {
@@ -594,6 +762,222 @@
    "note": "card not written yet",
    "stub": true,
    "url": "https://github.com/yuxiaopeng/Github-Ranking-AI"
+  }
+ ],
+ "recipes": [
+  {
+   "id": "ready-assistant",
+   "levels": {
+    "1": {
+     "steps": [
+      {
+       "cite": "data/pmle-rowboat-scout/report.md section 3; Rowboat README",
+       "dot": "rowboat",
+       "source": "source-backed",
+       "tag": "S",
+       "why": "Download the Rowboat desktop app for Mac, Windows or Linux. It has email, notes, meeting notes and background agents. Intel Mac support: unknown."
+      },
+      {
+       "cite": "data/stack-scout-v1/report.md 2a; data/pmle-rowboat-scout/report.md section 3 (Ollama provider)",
+       "dot": "ollama",
+       "source": "source-backed",
+       "tag": "S",
+       "why": "Pick a model. Use your own key, or a local model through Ollama or LM Studio."
+      },
+      {
+       "cite": "data/pmle-rowboat-scout/report.md section 3; https://github.com/rowboatlabs/rowboat",
+       "dot": "rowboat",
+       "source": "source-backed",
+       "tag": "S",
+       "why": "Add tools. Rowboat takes any MCP server in Settings and has one-click integrations."
+      }
+     ],
+     "title": "Use it ready-made"
+    },
+    "2": {
+     "steps": [
+      {
+       "alternatives": [
+        {
+         "dot": "hkuds-rag-anything",
+         "why": "A real multimodal retrieval engine. Heavier. Local model support: unknown."
+        },
+        {
+         "dot": "decodingai-second-brain-course",
+         "why": "Teaches agentic RAG. Text only. Needs an OpenAI key."
+        }
+       ],
+       "cite": "data/stack-scout-v1/report.md 2a (pick is the scout's judgement); data/pmle-rowboat-scout/report.md section 3",
+       "detail": "Type: markdown notes with backlinks, no vector database. Level: text now, images later. Rowboat itself builds its graph from markdown links, not a graph database.",
+       "dot": "obsidian-second-brain",
+       "slot": "retrieval",
+       "source": "model-drafted",
+       "tag": "M",
+       "why": "Keep the notes as plain markdown. This pick ingests URLs, PDFs, audio and screenshots by prompt."
+      },
+      {
+       "alternatives": [],
+       "cite": "No report covers this slot",
+       "detail": "Pick: unknown. No report names a desktop manager. Rowboat's desktop app is the nearest part named. The captain defines this slot.",
+       "dot": "rowboat",
+       "slot": "desktop manager",
+       "source": "model-drafted",
+       "tag": "M",
+       "why": "Slot left open on purpose."
+      },
+      {
+       "alternatives": [
+        {
+         "dot": "obsidian",
+         "why": "Free for all purposes per its terms. Open source: unknown."
+        }
+       ],
+       "cite": "data/stack-scout-v1/report.md 2a (recommendation is the scout's judgement)",
+       "detail": "Use Rowboat only as the viewer and capture UI, not as the brain.",
+       "dot": "rowboat",
+       "slot": "desktop UI",
+       "source": "model-drafted",
+       "tag": "M",
+       "why": "A ready viewer and capture UI for the notes."
+      },
+      {
+       "alternatives": [
+        {
+         "dot": "rowboat",
+         "why": "Built-in background agents on cron, window or once schedules. Runs in the app."
+        },
+        {
+         "dot": "gas-town",
+         "why": "A Mayor over 20 to 30 agents. One list line only. Not checked."
+        }
+       ],
+       "cite": "data/eco-compare-v1/report.md section 1; data/pmle-rowboat-scout/report.md section 3",
+       "detail": "The software-factory idea: one dispatcher, many agents.",
+       "dot": "firstmate",
+       "slot": "agents manager",
+       "source": "model-drafted",
+       "tag": "M",
+       "why": "One first mate sends crewmates to disposable worktrees and holds decisions for the captain."
+      }
+     ],
+     "title": "Assemble it from parts"
+    },
+    "3": {
+     "steps": [
+      {
+       "cite": "data/pmle-rowboat-scout/report.md section 4, milestone steps 1 and 3",
+       "dot": "rowboat",
+       "exam": [
+        {
+         "name": "Collaborating within and across teams to manage data and models",
+         "section": "2",
+         "weight": "~16%"
+        }
+       ],
+       "source": "source-backed",
+       "tag": "S",
+       "why": "Make a folder of markdown notes. A script asks a model for people and orgs, looks each up in an index file, and writes backlinks. Run it twice: the files must match."
+      },
+      {
+       "cite": "data/pmle-rowboat-scout/report.md section 4, milestone step 2 and table",
+       "dot": "rowboat",
+       "exam": [
+        {
+         "name": "Evaluation and LLM-as-a-judge",
+         "section": "2.3",
+         "weight": "~16%"
+        },
+        {
+         "name": "Evaluating gen AI",
+         "section": "6.2",
+         "weight": "~13%"
+        }
+       ],
+       "source": "source-backed",
+       "tag": "S",
+       "why": "Label 30 pairs as same or different entity. Score merge precision and recall. When unsure, do not merge."
+      },
+      {
+       "cite": "data/pmle-rowboat-scout/report.md section 4, Google Cloud table",
+       "dot": "bigquery-ml",
+       "exam": [
+        {
+         "name": "Architecting low-code AI solutions",
+         "section": "1.1",
+         "weight": "~13%"
+        }
+       ],
+       "source": "source-backed",
+       "tag": "S",
+       "why": "Train a small ranker on exported note or email metadata, to sort what matters."
+      },
+      {
+       "cite": "data/pmle-rowboat-scout/report.md section 4, Google Cloud table",
+       "dot": "agent-platform-pipelines",
+       "exam": [
+        {
+         "name": "Experiments and pipelines",
+         "section": "2.3",
+         "weight": "~16%"
+        },
+        {
+         "name": "Automating and orchestrating ML pipelines",
+         "section": "5.1",
+         "weight": "~18%"
+        }
+       ],
+       "source": "source-backed",
+       "tag": "S",
+       "why": "Turn the training into a tracked, repeatable pipeline job."
+      },
+      {
+       "cite": "data/pmle-rowboat-scout/report.md section 4, Google Cloud table",
+       "dot": "cloud-run",
+       "exam": [
+        {
+         "name": "Serving and scaling models",
+         "section": "4.1",
+         "weight": "~20%"
+        }
+       ],
+       "source": "source-backed",
+       "tag": "S",
+       "why": "Register the model and serve it behind a small API."
+      },
+      {
+       "cite": "data/pmle-rowboat-scout/report.md section 4, Google Cloud table",
+       "dot": "model-monitoring",
+       "exam": [
+        {
+         "name": "Monitoring AI solutions",
+         "section": "6.2",
+         "weight": "~13%"
+        }
+       ],
+       "source": "source-backed",
+       "tag": "S",
+       "why": "Watch for drift in the queries and features."
+      },
+      {
+       "cite": "data/pmle-rowboat-scout/report.md section 4 (the study route is the scout's judgement)",
+       "dot": "google-pmle-exam-guide",
+       "exam": [
+        {
+         "name": "Scaling prototypes into ML models",
+         "section": "3",
+         "weight": "~21%"
+        }
+       ],
+       "source": "model-drafted",
+       "tag": "M",
+       "why": "The heaviest section is hardware, custom training and tuning. The project does not touch it. Study it apart, with Skills Boost and small custom-training runs."
+      }
+     ],
+     "title": "Build it from scratch"
+    }
+   },
+   "problem": "I want an AI assistant that knows my work and helps me every day.",
+   "title": "A ready-to-use AI assistant"
   }
  ]
 }

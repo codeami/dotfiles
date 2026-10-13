@@ -37,6 +37,27 @@ for n in full:
             assert n[block][s]["source"] in ("source-backed", "model-drafted", "captain"), "%s %s.%s source" % (n["id"], block, s)
 anv = [n for n in d["nodes"] if n["id"] == "anvaka-map-of-github"]
 assert anv and anv[0]["stub"] and "2025-05-10" in anv[0]["line"] and "shared stargazers" in anv[0]["line"], "map-of-github stub"
+
+rec = d.get("recipes", [])
+assert rec, "no recipes"
+weights = {"1": "~13%", "2": "~16%", "3": "~21%", "4": "~20%", "5": "~18%", "6": "~13%"}  # PMLE guide, data/pmle-rowboat-scout/report.md
+for r in rec:
+    assert set(r["levels"]) == {"1", "2", "3"}, "%s: levels 1-3 must all be present" % r["id"]
+    for lv, level in r["levels"].items():
+        assert level["steps"], "%s level %s has no steps" % (r["id"], lv)
+        for st in level["steps"]:
+            assert st["dot"] in ids, "%s step points at a missing dot: %s" % (r["id"], st["dot"])
+            assert st["tag"] in ("S", "M"), "%s step has no S or M tag: %s" % (r["id"], st["dot"])
+            assert st["cite"] and st["why"], "%s step needs a reason and a cite: %s" % (r["id"], st["dot"])
+            for alt in st.get("alternatives", []):
+                assert alt["dot"] in ids, "alternative points at a missing dot: %s" % alt["dot"]
+    slots = [st.get("slot") for st in r["levels"]["2"]["steps"]]
+    for want in ("retrieval", "desktop manager", "desktop UI", "agents manager"):
+        assert want in slots, "level 2 has no %s slot" % want
+    for st in r["levels"]["3"]["steps"]:
+        assert st.get("exam"), "level 3 step has no PMLE section: %s" % st["dot"]
+        for x in st["exam"]:
+            assert weights[x["section"].split(".")[0]] == x["weight"], "wrong PMLE weight: %s" % x
 PY
 
 # No resource loads. Links shown as text in the data are fine.
@@ -45,4 +66,4 @@ if grep -Eq '(src|href|action|poster)="(https?:)?//|url\(|@import|<link|<img|<if
 fi
 grep -q 'type="application/json"' "$MAP/index.html" || fail "things-map: no inline data block"
 
-pass "things-map: deterministic build, valid edges, 12 slots per card, page loads nothing"
+pass "things-map: deterministic build, valid edges, 12 slots per card, recipe steps on real dots, page loads nothing"

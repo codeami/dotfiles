@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build second-brain/things/map/data.json from the thing cards and stubs.json.
+"""Build second-brain/things/map/data.json from the thing cards, stubs.json and recipes.json.
 
 Also rewrites the inline copy of the data in index.html, so the page opens
 by double-click with no server. Standard library only. Output is deterministic.
@@ -117,6 +117,16 @@ def stub_node(s):
             "facts": {"licence": s["licence"], "last activity": s["last_push"], "stars": s["stars"]}}
 
 
+def read_recipes():
+    """recipes.json is hand-written. Add a readable source word to every tag."""
+    recipes = json.loads((HERE / "recipes.json").read_text(encoding="utf-8"))
+    for r in recipes:
+        for level in r["levels"].values():
+            for step in level["steps"]:
+                step["source"] = SOURCE[step["tag"]]
+    return recipes
+
+
 def build():
     cards = [read_card(p) for p in sorted(THINGS.glob("*.md")) if p.name != "_template.md"]
     stubs = json.loads((HERE / "stubs.json").read_text(encoding="utf-8"))
@@ -124,7 +134,7 @@ def build():
     nodes = [{k: v for k, v in c.items() if not k.startswith("_")} for c in cards]
     nodes += [stub_node(s) for s in stubs]
     nodes.sort(key=lambda n: n["id"])
-    return {"nodes": nodes, "edges": edges}
+    return {"nodes": nodes, "edges": edges, "recipes": read_recipes()}
 
 
 def dump(data):
