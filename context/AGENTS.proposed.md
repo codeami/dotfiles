@@ -27,8 +27,13 @@ file was actually loaded.)
 6. **Drafts, not sends.** Never send, post, publish or push to `main` without
    my explicit OK. Full-auto modes (`cc`/`co`) only inside a worktree.
 7. **Secrets never go in files**, commits, logs or prompts.
-8. **Ask, don't guess,** when a task could belong to two rooms below.
-9. **Ordered work.** Multi-step work lives in numbered stage folders
+8. **This file is public** (dotfiles on GitHub). Personal context and current
+   priorities live in `~/github/firstmate/data/captain-shared.md` (private).
+   Read it when a task needs it; never copy from it into a public file.
+9. **This is an Intel Mac.** No Apple Intelligence, and an Apple Silicon-only
+   tool needs a check before you suggest it.
+10. **Ask, don't guess,** when a task could belong to two rooms below.
+11. **Ordered work.** Multi-step work lives in numbered stage folders
    (`01-…`, `02-…`). Each stage's `CONTEXT.md` names input, one task, output,
    check. Do one stage at a time, no silent skips. I decide at the first
    and last stage; fix a wrong result by fixing the stage file, not the output.
@@ -45,6 +50,20 @@ file was actually loaded.)
 | Anything else | ask which room | — | — |
 
 Room paths are relative to `~/context/` (a link to `dotfiles/context/`).
+
+## Reference patterns
+
+The shapes this setup is built from. Name them when they explain a choice;
+don't re-derive them.
+
+- **ICM** (Jake Van Clief) — ordered stages, a contract per stage, rooms with
+  their own taste files. The structure of this file and of `areas/` follows it.
+- **Kun Chen's stack** — the factory conventions: one dispatcher, disposable
+  worktrees, a gate before push, instructions as the product. The tools are
+  listed below.
+- **SICP, MIT 6.00, CS61A** — the CS vocabulary I read fluently. Explain at an
+  engineer's level and use these terms directly; reach for an analogy when a
+  concept is genuinely new, not by default.
 
 ## Tools I have
 
