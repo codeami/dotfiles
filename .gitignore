@@ -33,3 +33,7 @@ context/inbox/drift/
 # blog: generated board and publish exports
 context/areas/blog/drafts/index.html
 context/areas/blog/drafts/export/
+
+# local scratch and env fixtures never go public
+scratch/
+.env.staging
