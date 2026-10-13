@@ -1,0 +1,599 @@
+{
+ "edges": [
+  {
+   "from": "ai-news-radar",
+   "source": "card",
+   "to": "awesome-ai-news",
+   "votes": 0,
+   "why": "ai-news-radar pairs-with awesome-ai-news: listed there as \"Most Active\""
+  },
+  {
+   "from": "ai-news-radar",
+   "source": "card",
+   "to": "deepwiki",
+   "votes": 0,
+   "why": "deepwiki pairs-with ai-news-radar: its README is mainly Chinese, and repo-discovery-priorart-scout suggests routing Chinese READMEs to Deep…"
+  },
+  {
+   "from": "ai-news-radar",
+   "source": "card",
+   "to": "pocketflow",
+   "votes": 0,
+   "why": "ai-news-radar pairs-with pocketflow: model-drafted idea, not verified"
+  }
+ ],
+ "nodes": [
+  {
+   "facts": {
+    "last activity": "pushed 2026-10-13 (GitHub API)",
+    "licence": "MIT (GitHub API)",
+    "stars": "1773 (GitHub API)"
+   },
+   "id": "ai-news-radar",
+   "kind": "app",
+   "name": "ai-news-radar",
+   "product": {
+    "how": {
+     "source": "source-backed",
+     "text": "GitHub Actions gather sources, then a web page shows them."
+    },
+    "what": {
+     "source": "source-backed",
+     "text": "A 24-hour AI news radar with a live web page."
+    },
+    "when": {
+     "source": "source-backed",
+     "text": "Updates on a schedule, and the last push was today."
+    },
+    "where": {
+     "source": "source-backed",
+     "text": "On GitHub, with a live site at news.learnprompt.pro."
+    },
+    "who": {
+     "source": "source-backed",
+     "text": "Built by LearnPrompt, for anyone who wants a daily AI news view."
+    },
+    "why": {
+     "source": "captain",
+     "text": "(captain: why do you want this one?)"
+    }
+   },
+   "stub": false,
+   "tech": {
+    "how": {
+     "source": "source-backed",
+     "text": "Install the skill with `npx skills add LearnPrompt/ai-news-radar -s ai-radar -g`, then ask the agent for today's news. README claims no API keys needed. Not run by me."
+    },
+    "what": {
+     "source": "source-backed",
+     "text": "Merges many sources into story lines and offers three styles of commentary. Also ships agent skills (`ai-radar`, `ai-news-radar`)."
+    },
+    "when": {
+     "source": "source-backed",
+     "text": "README says v0.9 gave a single-layer UI. A scheduled workflow (`update-news.yml`) refreshes the data."
+    },
+    "where": {
+     "source": "source-backed",
+     "text": "Repo LearnPrompt/ai-news-radar. Live site news.learnprompt.pro, with a GitHub Pages mirror."
+    },
+    "who": {
+     "source": "source-backed",
+     "text": "LearnPrompt (GitHub org). README is mainly Chinese, with an English version (README.en.md)."
+    },
+    "why": {
+     "source": "captain",
+     "text": "(captain: write your own reason here)"
+    }
+   },
+   "url": "unknown"
+  },
+  {
+   "facts": {
+    "last activity": "2026-10-10",
+    "licence": "MIT",
+    "stars": "3.6k"
+   },
+   "id": "aidotnet-opendeepwiki",
+   "kind": "tool",
+   "line": "Another DeepWiki clone, in C# and TypeScript. Not run by the scout.",
+   "name": "AIDotNet/OpenDeepWiki",
+   "note": "card not written yet",
+   "stub": true,
+   "url": "https://github.com/AIDotNet/OpenDeepWiki"
+  },
+  {
+   "facts": {
+    "last activity": "2026-10-12",
+    "licence": "MIT",
+    "stars": "3.7k"
+   },
+   "id": "amintacccp-githubstarsmanager",
+   "kind": "app",
+   "line": "App that syncs your starred repos, adds AI summaries, tags and categories, and keeps data local.",
+   "name": "AmintaCCCP/GithubStarsManager",
+   "note": "card not written yet",
+   "stub": true,
+   "url": "https://github.com/AmintaCCCP/GithubStarsManager"
+  },
+  {
+   "facts": {
+    "last activity": "2025-12-14",
+    "licence": "README states MIT, with a request to credit the project when its data is used; no LICENSE file",
+    "stars": "2872"
+   },
+   "id": "anvaka-map-of-github",
+   "kind": "map",
+   "line": "A map of 690K GitHub projects. Frozen snapshot dated 2025-05-10, built from star events up to May 2025. Closeness means shared stargazers, not what a project does. Newer projects are missing.",
+   "name": "anvaka/map-of-github",
+   "note": "card not written yet",
+   "stub": true,
+   "url": "https://anvaka.github.io/map-of-github/"
+  },
+  {
+   "facts": {
+    "last activity": "unknown",
+    "licence": "unknown",
+    "stars": "unknown"
+   },
+   "id": "apify-github-list-scraper",
+   "kind": "service",
+   "line": "Hosted scraper for awesome lists and topics on a paid platform. Claim is from a search snippet, not checked.",
+   "name": "Apify GitHub List Scraper",
+   "note": "card not written yet",
+   "stub": true,
+   "url": "unknown"
+  },
+  {
+   "facts": {
+    "last activity": "2026-09-03",
+    "licence": "MIT",
+    "stars": "18k"
+   },
+   "id": "asyncfuncai-deepwiki-open",
+   "kind": "tool",
+   "line": "Self-hosted DeepWiki clone: wiki, diagrams and chat per repo. Runs in Docker.",
+   "name": "AsyncFuncAI/deepwiki-open",
+   "note": "card not written yet",
+   "stub": true,
+   "url": "https://github.com/AsyncFuncAI/deepwiki-open"
+  },
+  {
+   "facts": {
+    "last activity": "pushed 2026-02-25 (GitHub API)",
+    "licence": "CC0 1.0 per README. GitHub API shows no licence file.",
+    "stars": "57 (GitHub API). The scout saw 56 earlier."
+   },
+   "id": "awesome-ai-news",
+   "kind": "list",
+   "name": "awesome-ai-news",
+   "product": {
+    "how": {
+     "source": "source-backed",
+     "text": "Read the list by category and follow the links."
+    },
+    "what": {
+     "source": "source-backed",
+     "text": "A curated list of AI news and RSS tools."
+    },
+    "when": {
+     "source": "source-backed",
+     "text": "Last push was February 2026, so it looks quiet."
+    },
+    "where": {
+     "source": "source-backed",
+     "text": "A README on GitHub."
+    },
+    "who": {
+     "source": "source-backed",
+     "text": "Kept by taielab, for people who hunt for news tools."
+    },
+    "why": {
+     "source": "captain",
+     "text": "(captain: why do you want this one?)"
+    }
+   },
+   "stub": false,
+   "tech": {
+    "how": {
+     "source": "source-backed",
+     "text": "Read the README. The smallest build idea from repo-discovery-priorart-scout is: parse this list, enrich each entry, write a JSON file."
+    },
+    "what": {
+     "source": "source-backed",
+     "text": "A catalogue, not a news engine. About 10 categories, such as aggregation, RSS, arXiv and GitHub trending. Tools get hand-given 1 to 5 stars and labels. news-design-scout counted 33 listed projects."
+    },
+    "when": {
+     "source": "source-backed",
+     "text": "Last push 2026-02-25 (GitHub API). One commit on `main` per news-design-scout."
+    },
+    "where": {
+     "source": "source-backed",
+     "text": "Repo taielab/awesome-ai-news. Files: README.md, README_CN.md, CONTRIBUTING.md."
+    },
+    "who": {
+     "source": "source-backed",
+     "text": "taielab (GitHub user). Contributions invited via CONTRIBUTING.md."
+    },
+    "why": {
+     "source": "captain",
+     "text": "(captain: write your own reason here)"
+    }
+   },
+   "url": "unknown"
+  },
+  {
+   "facts": {
+    "last activity": "2026-10-12",
+    "licence": "NOASSERTION",
+    "stars": "45"
+   },
+   "id": "codename-co-stack",
+   "kind": "tool",
+   "line": "Agent skill that finds free or open-source alternative software. Claim is from a search snippet.",
+   "name": "codename-co/stack",
+   "note": "card not written yet",
+   "stub": true,
+   "url": "https://github.com/codename-co/stack"
+  },
+  {
+   "facts": {
+    "last activity": "unknown",
+    "licence": "unknown",
+    "stars": "unknown"
+   },
+   "id": "context-awesome",
+   "kind": "service",
+   "line": "Hosted service that parses awesome list READMEs into name, link, description and category. Claim is from a search snippet, not checked.",
+   "name": "context-awesome.com",
+   "note": "card not written yet",
+   "stub": true,
+   "url": "https://context-awesome.com"
+  },
+  {
+   "facts": {
+    "last activity": "unknown",
+    "licence": "unknown (hosted service, no repo checked)",
+    "stars": "unknown"
+   },
+   "id": "deepwiki",
+   "kind": "service",
+   "name": "DeepWiki",
+   "product": {
+    "how": {
+     "source": "source-backed",
+     "text": "Ask a question about a public repo, free and with no login."
+    },
+    "what": {
+     "source": "source-backed",
+     "text": "AI-written wiki pages and answers for a GitHub repo."
+    },
+    "when": {
+     "source": "source-backed",
+     "text": "Live now. The scout tested its MCP server on 2026-10-12."
+    },
+    "where": {
+     "source": "source-backed",
+     "text": "Online, plus an MCP server for agents."
+    },
+    "who": {
+     "source": "source-backed",
+     "text": "Run by Cognition (makers of Devin), for anyone reading code."
+    },
+    "why": {
+     "source": "captain",
+     "text": "(captain: why do you want this one?)"
+    }
+   },
+   "stub": false,
+   "tech": {
+    "how": {
+     "source": "source-backed",
+     "text": "Three tools: `read_wiki_structure`, `read_wiki_contents` and `ask_wiki_question` (the docs say `ask_question`). Claude Code setup: `claude mcp add -s user -t http deepwiki https://mcp.deepwiki.com/mcp`. Not run by me."
+    },
+    "what": {
+     "source": "source-backed",
+     "text": "Generates wiki pages for a repo and answers questions grounded in it. The scout says it is not authoritative. Read the source before you edit or quote."
+    },
+    "when": {
+     "source": "source-backed",
+     "text": "MCP server page and live `tools/list` checked 2026-10-12 by deepwiki-howto-v1. Start date unknown."
+    },
+    "where": {
+     "source": "source-backed",
+     "text": "`https://mcp.deepwiki.com/mcp` (Streamable HTTP). Public repos only."
+    },
+    "who": {
+     "source": "source-backed",
+     "text": "Cognition (docs.devin.ai and the Cognition blog). The self-hosted clone deepwiki-open is a different project."
+    },
+    "why": {
+     "source": "captain",
+     "text": "(captain: write your own reason here)"
+    }
+   },
+   "url": "unknown"
+  },
+  {
+   "facts": {
+    "last activity": "2026-10-12",
+    "licence": "AGPL-3.0",
+    "stars": "105"
+   },
+   "id": "ecosyste-ms-awesome",
+   "kind": "service",
+   "line": "Public index and API of awesome lists, with per-list project lists, topics and star counts (awesome.ecosyste.ms).",
+   "name": "ecosyste-ms/awesome",
+   "note": "card not written yet",
+   "stub": true,
+   "url": "https://github.com/ecosyste-ms/awesome"
+  },
+  {
+   "facts": {
+    "last activity": "2026-10-09",
+    "licence": "MIT",
+    "stars": "407"
+   },
+   "id": "emanuelef-daily-stars-explorer",
+   "kind": "tool",
+   "line": "Daily star history, repo comparison and CSV or JSON export. Runs in Docker.",
+   "name": "emanuelef/daily-stars-explorer",
+   "note": "card not written yet",
+   "stub": true,
+   "url": "https://github.com/emanuelef/daily-stars-explorer"
+  },
+  {
+   "facts": {
+    "last activity": "2026-08-05",
+    "licence": "MIT",
+    "stars": "97"
+   },
+   "id": "hujinghaoabcd-starhub",
+   "kind": "app",
+   "line": "Star organiser with AI classification. Features are from a search snippet, not checked.",
+   "name": "hujinghaoabcd/StarHub",
+   "note": "card not written yet",
+   "stub": true,
+   "url": "https://github.com/hujinghaoabcd/StarHub"
+  },
+  {
+   "facts": {
+    "last activity": "unknown",
+    "licence": "unknown",
+    "stars": "unknown"
+   },
+   "id": "openhub-stacks",
+   "kind": "list",
+   "line": "User-curated lists of projects used together. Manual only.",
+   "name": "OpenHub stacks",
+   "note": "card not written yet",
+   "stub": true,
+   "url": "unknown"
+  },
+  {
+   "facts": {
+    "last activity": "2026-09-08",
+    "licence": "Apache-2.0",
+    "stars": "2.5k"
+   },
+   "id": "pingcap-ossinsight",
+   "kind": "service",
+   "line": "Trends, rankings and repo comparison over GitHub events. Heavy: needs TiDB and large event data.",
+   "name": "pingcap/ossinsight",
+   "note": "card not written yet",
+   "stub": true,
+   "url": "https://github.com/pingcap/ossinsight"
+  },
+  {
+   "facts": {
+    "last activity": "pushed 2026-07-26 (GitHub API)",
+    "licence": "MIT (GitHub API)",
+    "stars": "11236 (GitHub API)"
+   },
+   "id": "pocketflow",
+   "kind": "framework",
+   "name": "PocketFlow",
+   "product": {
+    "how": {
+     "source": "source-backed",
+     "text": "Install it with pip, or copy the one source file."
+    },
+    "what": {
+     "source": "source-backed",
+     "text": "A tiny LLM framework, about 100 lines of code."
+    },
+    "when": {
+     "source": "source-backed",
+     "text": "Last push was July 2026."
+    },
+    "where": {
+     "source": "source-backed",
+     "text": "On GitHub and PyPI, with docs online."
+    },
+    "who": {
+     "source": "source-backed",
+     "text": "Built by The-Pocket, for developers who build LLM apps."
+    },
+    "why": {
+     "source": "captain",
+     "text": "(captain: why do you want this one?)"
+    }
+   },
+   "stub": false,
+   "tech": {
+    "how": {
+     "source": "source-backed",
+     "text": "`pip install pocketflow`, or copy `pocketflow/__init__.py`. news-design-scout read the sibling PocketFlow-Tutorial-Codebase-Knowledge repo and suggests the node, shared-store and YAML pattern."
+    },
+    "what": {
+     "source": "source-backed",
+     "text": "A minimalist LLM framework with zero dependencies. README says it covers agents, workflows and RAG. It also pushes \"agentic coding\", where an AI agent builds the app."
+    },
+    "when": {
+     "source": "source-backed",
+     "text": "Last push 2026-07-26 (GitHub API)."
+    },
+    "where": {
+     "source": "source-backed",
+     "text": "Repo The-Pocket/PocketFlow. Docs at the-pocket.github.io/PocketFlow."
+    },
+    "who": {
+     "source": "source-backed",
+     "text": "The-Pocket (GitHub org). README links ports for TypeScript, Java and C++."
+    },
+    "why": {
+     "source": "captain",
+     "text": "(captain: write your own reason here)"
+    }
+   },
+   "url": "unknown"
+  },
+  {
+   "facts": {
+    "last activity": "2025-10-12",
+    "licence": "MIT",
+    "stars": "20"
+   },
+   "id": "protontypes-awesomecure",
+   "kind": "tool",
+   "line": "Notebooks that pull GitHub metadata for one awesome list and make tables and plots.",
+   "name": "protontypes/AwesomeCure",
+   "note": "card not written yet",
+   "stub": true,
+   "url": "https://github.com/protontypes/AwesomeCure"
+  },
+  {
+   "facts": {
+    "last activity": "unknown",
+    "licence": "unknown",
+    "stars": "unknown"
+   },
+   "id": "publicstack-ai",
+   "kind": "service",
+   "line": "Claimed to recommend repos that enhance or replace parts of a stack. Unverified, not opened.",
+   "name": "PublicStack AI",
+   "note": "card not written yet",
+   "stub": true,
+   "url": "unknown"
+  },
+  {
+   "facts": {
+    "last activity": "pushed 2026-10-13 (GitHub API)",
+    "licence": "Apache-2.0 (GitHub API)",
+    "stars": "18011 (GitHub API)"
+   },
+   "id": "rowboat",
+   "kind": "app",
+   "name": "Rowboat",
+   "product": {
+    "how": {
+     "source": "source-backed",
+     "text": "Download the app, then it indexes your work into a knowledge graph."
+    },
+    "what": {
+     "source": "source-backed",
+     "text": "An open-source AI coworker with memory, email and notes."
+    },
+    "when": {
+     "source": "source-backed",
+     "text": "Active now, with a push today."
+    },
+    "where": {
+     "source": "source-backed",
+     "text": "A desktop app for Mac, Windows and Linux."
+    },
+    "who": {
+     "source": "source-backed",
+     "text": "Built by Rowboat Labs, for people who want a personal AI assistant."
+    },
+    "why": {
+     "source": "captain",
+     "text": "(captain: why do you want this one?)"
+    }
+   },
+   "stub": false,
+   "tech": {
+    "how": {
+     "source": "source-backed",
+     "text": "Per README, background agents run on events or schedules and can use tools, the web, a browser, Claude Code or Codex. Not run by me. Intel Mac support unknown."
+    },
+    "what": {
+     "source": "source-backed",
+     "text": "Indexes email, meetings, Slack and chats into a backlinked knowledge graph. Also has an email client, notes, browser, code mode and background agents."
+    },
+    "when": {
+     "source": "source-backed",
+     "text": "Last push 2026-10-13 (GitHub API). Release history not checked."
+    },
+    "where": {
+     "source": "source-backed",
+     "text": "Repo rowboatlabs/rowboat. Downloads at rowboatlabs.com/downloads."
+    },
+    "who": {
+     "source": "source-backed",
+     "text": "rowboatlabs (GitHub org). README shows a Y Combinator S24 badge."
+    },
+    "why": {
+     "source": "captain",
+     "text": "(captain: write your own reason here)"
+    }
+   },
+   "url": "unknown"
+  },
+  {
+   "facts": {
+    "last activity": "2023-02-25",
+    "licence": "MIT",
+    "stars": "11"
+   },
+   "id": "rydesun-awesome-github",
+   "kind": "tool",
+   "line": "Go CLI (awg) that fetches repo info for the entries of an awesome list. Stale.",
+   "name": "rydesun/awesome-github",
+   "note": "card not written yet",
+   "stub": true,
+   "url": "https://github.com/rydesun/awesome-github"
+  },
+  {
+   "facts": {
+    "last activity": "2026-09-12",
+    "licence": "MIT",
+    "stars": "9.6k"
+   },
+   "id": "star-history-star-history",
+   "kind": "tool",
+   "line": "Star history charts.",
+   "name": "star-history/star-history",
+   "note": "card not written yet",
+   "stub": true,
+   "url": "https://github.com/star-history/star-history"
+  },
+  {
+   "facts": {
+    "last activity": "unknown",
+    "licence": "unknown",
+    "stars": "unknown"
+   },
+   "id": "starlens",
+   "kind": "app",
+   "line": "Stars manager with tags, search, CLI and MCP. Only a Product Hunt page was found. Unverified.",
+   "name": "Starlens",
+   "note": "card not written yet",
+   "stub": true,
+   "url": "unknown"
+  },
+  {
+   "facts": {
+    "last activity": "2026-10-12",
+    "licence": "MIT",
+    "stars": "567"
+   },
+   "id": "yuxiaopeng-github-ranking-ai",
+   "kind": "list",
+   "line": "Daily star ranking of AI-topic repos, updated by GitHub Actions.",
+   "name": "yuxiaopeng/Github-Ranking-AI",
+   "note": "card not written yet",
+   "stub": true,
+   "url": "https://github.com/yuxiaopeng/Github-Ranking-AI"
+  }
+ ]
+}

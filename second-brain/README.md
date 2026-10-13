@@ -29,3 +29,5 @@ arXiv:2603.16021).
 ## Things (pilot)
 
 `things/` holds one card per thing. Each card has a PRODUCT block (six 5W1H slots, about 60 words) and a TECH block (same slots, more detail, plus facts and links). Both follow plain STE (25 words per sentence, 20 per step, no semicolons). Check with `context/bin/plain-check`. Template: `things/_template.md`. Slot check: `tests/things-cards.test.sh`.
+
+`things/map/` shows the cards as a map. Open `things/map/index.html` by double-click. Rebuild it with `python3 second-brain/things/map/build.py`. Check with `tests/things-map.test.sh`. Inspired by Map of GitHub by Andrei Kashcha (anvaka), https://github.com/anvaka/map-of-github
