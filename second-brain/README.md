@@ -25,3 +25,7 @@ arXiv:2603.16021).
 - shared/index.md ... Layer 3: the node graph
 - nodes/ ............ Layer 4: distilled atomic notes
 - inbox/ ............ Layer 4: raw captures awaiting distillation
+
+## Things (pilot)
+
+`things/` holds one card per thing. Each card has a PRODUCT block (six 5W1H slots, about 60 words) and a TECH block (same slots, more detail, plus facts and links). Both follow plain STE (25 words per sentence, 20 per step, no semicolons). Check with `context/bin/plain-check`. Template: `things/_template.md`. Slot check: `tests/things-cards.test.sh`.
