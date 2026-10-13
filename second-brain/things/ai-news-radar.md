@@ -15,7 +15,7 @@ Tags: [S] source-backed, [M] model-drafted, [C] captain's voice. Unknown stays `
 - what: [S] A 24-hour AI news radar with a live web page.
 - when: [S] Updates on a schedule, and the last push was today.
 - where: [S] On GitHub, with a live site at news.learnprompt.pro.
-- why: [C] (captain: why do you want this one?)
+- why: [S] Read the last 24 hours of AI news, or ask an agent for a daily brief. Source: its README.
 - how: [S] GitHub Actions gather sources, then a web page shows them.
 
 ## TECH
@@ -24,7 +24,7 @@ Tags: [S] source-backed, [M] model-drafted, [C] captain's voice. Unknown stays `
 - what: [S] Merges many sources into story lines and offers three styles of commentary. Also ships agent skills (`ai-radar`, `ai-news-radar`).
 - when: [S] README says v0.9 gave a single-layer UI. A scheduled workflow (`update-news.yml`) refreshes the data.
 - where: [S] Repo LearnPrompt/ai-news-radar. Live site news.learnprompt.pro, with a GitHub Pages mirror.
-- why: [C] (captain: write your own reason here)
+- why: [S] Use cases per README: ask an agent for a brief, or read the live page. You can also fork it. Then it runs your own radar with your own OPML sources and persona files. Services named: GitHub Actions, GitHub Pages, the news.learnprompt.pro site, and AgentMail. Sister sites: AI MAP and GoodCase. Source: github.com/LearnPrompt/ai-news-radar README.
 - how: [S] Install the skill with `npx skills add LearnPrompt/ai-news-radar -s ai-radar -g`, then ask the agent for today's news. README claims no API keys needed. Not run by me.
 
 ### Facts

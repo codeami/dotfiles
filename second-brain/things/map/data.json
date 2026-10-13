@@ -54,8 +54,8 @@
      "text": "Built by LearnPrompt, for anyone who wants a daily AI news view."
     },
     "why": {
-     "source": "captain",
-     "text": "(captain: why do you want this one?)"
+     "source": "source-backed",
+     "text": "Read the last 24 hours of AI news, or ask an agent for a daily brief. Source: its README."
     }
    },
    "stub": false,
@@ -81,8 +81,8 @@
      "text": "LearnPrompt (GitHub org). README is mainly Chinese, with an English version (README.en.md)."
     },
     "why": {
-     "source": "captain",
-     "text": "(captain: write your own reason here)"
+     "source": "source-backed",
+     "text": "Use cases per README: ask an agent for a brief, or read the live page. You can also fork it. Then it runs your own radar with your own OPML sources and persona files. Services named: GitHub Actions, GitHub Pages, the news.learnprompt.pro site, and AgentMail. Sister sites: AI MAP and GoodCase. Source: github.com/LearnPrompt/ai-news-radar README."
     }
    },
    "url": "unknown"
@@ -188,8 +188,8 @@
      "text": "Kept by taielab, for people who hunt for news tools."
     },
     "why": {
-     "source": "captain",
-     "text": "(captain: why do you want this one?)"
+     "source": "source-backed",
+     "text": "Find tools that collect AI news, manage RSS feeds or make podcasts from news. Source: its README."
     }
    },
    "stub": false,
@@ -215,8 +215,8 @@
      "text": "taielab (GitHub user). Contributions invited via CONTRIBUTING.md."
     },
     "why": {
-     "source": "captain",
-     "text": "(captain: write your own reason here)"
+     "source": "source-backed",
+     "text": "Use cases per README sections: news aggregation, RSS management and academic papers. Also GitHub trending, social media monitoring and podcast generation. Also message push, security news, static sites and publishing. Services named in entries: Telegram, WeChat, Cloudflare Workers, Gemini, Ollama. Source: github.com/taielab/awesome-ai-news README."
     }
    },
    "url": "unknown"
@@ -280,8 +280,8 @@
      "text": "Run by Cognition (makers of Devin), for anyone reading code."
     },
     "why": {
-     "source": "captain",
-     "text": "(captain: why do you want this one?)"
+     "source": "source-backed",
+     "text": "Learn how a public repo works without cloning it. Ask questions about it from your agent. Source: the scout reports."
     }
    },
    "stub": false,
@@ -307,8 +307,8 @@
      "text": "Cognition (docs.devin.ai and the Cognition blog). The self-hosted clone deepwiki-open is a different project."
     },
     "why": {
-     "source": "captain",
-     "text": "(captain: write your own reason here)"
+     "source": "source-backed",
+     "text": "Use cases per the docs: list a repo's wiki topics, read its wiki pages, and ask a question grounded in the repo. Services and clients named: Cognition and Devin (docs.devin.ai), Claude Code, OpenAI API examples (Cognition blog), CrewAI through Composio, and a Hugging Face blog guide. Free, no login, public repos only. Source: data/deepwiki-howto-v1/report.md. The scout saw the Composio and Hugging Face pages in search only."
     }
    },
    "url": "unknown"
@@ -414,8 +414,8 @@
      "text": "Built by The-Pocket, for developers who build LLM apps."
     },
     "why": {
-     "source": "captain",
-     "text": "(captain: why do you want this one?)"
+     "source": "source-backed",
+     "text": "Build LLM apps such as chat bots, agents and RAG with a tiny framework. Source: its README."
     }
    },
    "stub": false,
@@ -441,8 +441,8 @@
      "text": "The-Pocket (GitHub org). README links ports for TypeScript, Java and C++."
     },
     "why": {
-     "source": "captain",
-     "text": "(captain: write your own reason here)"
+     "source": "source-backed",
+     "text": "Use cases per README cookbook: chat, structured output, workflow, research agent, RAG, batch translation, streaming, multi-agent, supervisor, map-reduce and human-in-the-loop. It also lets coding agents such as Cursor AI build agents. Named options: pip install, ports in TypeScript, Java, C++, Go, Rust and PHP, and the project Discord. Source: github.com/The-Pocket/PocketFlow README."
     }
    },
    "url": "unknown"
@@ -506,8 +506,8 @@
      "text": "Built by Rowboat Labs, for people who want a personal AI assistant."
     },
     "why": {
-     "source": "captain",
-     "text": "(captain: why do you want this one?)"
+     "source": "source-backed",
+     "text": "Get an AI coworker that sorts email, drafts replies and takes meeting notes on your machine. Source: its README."
     }
    },
    "stub": false,
@@ -533,8 +533,8 @@
      "text": "rowboatlabs (GitHub org). README shows a Y Combinator S24 badge."
     },
     "why": {
-     "source": "captain",
-     "text": "(captain: write your own reason here)"
+     "source": "source-backed",
+     "text": "Use cases per README: a knowledge graph of work, email triage and drafts, and meeting notes. Also background agents on events or schedules, a shared browser and team Spaces. Code mode runs Claude Code or Codex. Services named: Slack, one-click integrations, Claude Code, Codex. Desktop app for Mac, Windows and Linux. Source: github.com/rowboatlabs/rowboat README."
     }
    },
    "url": "unknown"

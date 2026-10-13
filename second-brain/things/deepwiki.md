@@ -15,7 +15,7 @@ Tags: [S] source-backed, [M] model-drafted, [C] captain's voice. Unknown stays `
 - what: [S] AI-written wiki pages and answers for a GitHub repo.
 - when: [S] Live now. The scout tested its MCP server on 2026-10-12.
 - where: [S] Online, plus an MCP server for agents.
-- why: [C] (captain: why do you want this one?)
+- why: [S] Learn how a public repo works without cloning it. Ask questions about it from your agent. Source: the scout reports.
 - how: [S] Ask a question about a public repo, free and with no login.
 
 ## TECH
@@ -24,7 +24,7 @@ Tags: [S] source-backed, [M] model-drafted, [C] captain's voice. Unknown stays `
 - what: [S] Generates wiki pages for a repo and answers questions grounded in it. The scout says it is not authoritative. Read the source before you edit or quote.
 - when: [S] MCP server page and live `tools/list` checked 2026-10-12 by deepwiki-howto-v1. Start date unknown.
 - where: [S] `https://mcp.deepwiki.com/mcp` (Streamable HTTP). Public repos only.
-- why: [C] (captain: write your own reason here)
+- why: [S] Use cases per the docs: list a repo's wiki topics, read its wiki pages, and ask a question grounded in the repo. Services and clients named: Cognition and Devin (docs.devin.ai), Claude Code, OpenAI API examples (Cognition blog), CrewAI through Composio, and a Hugging Face blog guide. Free, no login, public repos only. Source: data/deepwiki-howto-v1/report.md. The scout saw the Composio and Hugging Face pages in search only.
 - how: [S] Three tools: `read_wiki_structure`, `read_wiki_contents` and `ask_wiki_question` (the docs say `ask_question`). Claude Code setup: `claude mcp add -s user -t http deepwiki https://mcp.deepwiki.com/mcp`. Not run by me.
 
 ### Facts

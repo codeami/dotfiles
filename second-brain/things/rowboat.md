@@ -15,7 +15,7 @@ Tags: [S] source-backed, [M] model-drafted, [C] captain's voice. Unknown stays `
 - what: [S] An open-source AI coworker with memory, email and notes.
 - when: [S] Active now, with a push today.
 - where: [S] A desktop app for Mac, Windows and Linux.
-- why: [C] (captain: why do you want this one?)
+- why: [S] Get an AI coworker that sorts email, drafts replies and takes meeting notes on your machine. Source: its README.
 - how: [S] Download the app, then it indexes your work into a knowledge graph.
 
 ## TECH
@@ -24,7 +24,7 @@ Tags: [S] source-backed, [M] model-drafted, [C] captain's voice. Unknown stays `
 - what: [S] Indexes email, meetings, Slack and chats into a backlinked knowledge graph. Also has an email client, notes, browser, code mode and background agents.
 - when: [S] Last push 2026-10-13 (GitHub API). Release history not checked.
 - where: [S] Repo rowboatlabs/rowboat. Downloads at rowboatlabs.com/downloads.
-- why: [C] (captain: write your own reason here)
+- why: [S] Use cases per README: a knowledge graph of work, email triage and drafts, and meeting notes. Also background agents on events or schedules, a shared browser and team Spaces. Code mode runs Claude Code or Codex. Services named: Slack, one-click integrations, Claude Code, Codex. Desktop app for Mac, Windows and Linux. Source: github.com/rowboatlabs/rowboat README.
 - how: [S] Per README, background agents run on events or schedules and can use tools, the web, a browser, Claude Code or Codex. Not run by me. Intel Mac support unknown.
 
 ### Facts

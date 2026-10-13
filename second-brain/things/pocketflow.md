@@ -15,7 +15,7 @@ Tags: [S] source-backed, [M] model-drafted, [C] captain's voice. Unknown stays `
 - what: [S] A tiny LLM framework, about 100 lines of code.
 - when: [S] Last push was July 2026.
 - where: [S] On GitHub and PyPI, with docs online.
-- why: [C] (captain: why do you want this one?)
+- why: [S] Build LLM apps such as chat bots, agents and RAG with a tiny framework. Source: its README.
 - how: [S] Install it with pip, or copy the one source file.
 
 ## TECH
@@ -24,7 +24,7 @@ Tags: [S] source-backed, [M] model-drafted, [C] captain's voice. Unknown stays `
 - what: [S] A minimalist LLM framework with zero dependencies. README says it covers agents, workflows and RAG. It also pushes "agentic coding", where an AI agent builds the app.
 - when: [S] Last push 2026-07-26 (GitHub API).
 - where: [S] Repo The-Pocket/PocketFlow. Docs at the-pocket.github.io/PocketFlow.
-- why: [C] (captain: write your own reason here)
+- why: [S] Use cases per README cookbook: chat, structured output, workflow, research agent, RAG, batch translation, streaming, multi-agent, supervisor, map-reduce and human-in-the-loop. It also lets coding agents such as Cursor AI build agents. Named options: pip install, ports in TypeScript, Java, C++, Go, Rust and PHP, and the project Discord. Source: github.com/The-Pocket/PocketFlow README.
 - how: [S] `pip install pocketflow`, or copy `pocketflow/__init__.py`. news-design-scout read the sibling PocketFlow-Tutorial-Codebase-Knowledge repo and suggests the node, shared-store and YAML pattern.
 
 ### Facts
